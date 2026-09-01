@@ -1,9 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Terms of Use for the Six Sigma mobile app.">
+    <meta name="description" content="Terms of Use for the Six Sigma mobile and Windows apps.">
     <meta name="theme-color" content="#f7f7f4" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#07111f" media="(prefers-color-scheme: dark)">
     <title>Terms of Use | Six Sigma</title>
@@ -26,10 +26,10 @@
       <aside class="legal-summary" aria-label="Document summary">
         <p class="eyebrow">LEGAL DOCUMENT</p>
         <h1>Terms of Use</h1>
-        <p class="effective">Effective August 29, 2026</p>
+        <p class="effective">Effective August 31, 2026</p>
         <p>
-          These terms govern your use of the Six Sigma mobile app and its Free
-          and Pro features.
+          These terms govern your use of the Six Sigma mobile and Windows apps
+          and their Free, Pro, shared-workspace, and paired-device features.
         </p>
         <a class="button" href="mailto:nealwiechman@gmail.com?subject=Six%20Sigma%20Terms%20Question">Contact support</a>
       </aside>
@@ -38,8 +38,9 @@
         <section id="agreement">
           <h2><span>01</span> Agreement</h2>
           <p>
-            By downloading or using the Six Sigma mobile app (the "App"), you
-            agree to these Terms of Use and the applicable rules of the store
+            By downloading or using a supported mobile or Windows desktop
+            version of the Six Sigma app (the "App"), you agree to these Terms
+            of Use and the applicable rules of the store or distribution channel
             that supplied the App. If you do not agree, do not use the App.
           </p>
         </section>
@@ -66,9 +67,12 @@
           <p>
             Subject to these terms and the applicable store rules, you receive a
             limited, personal, non-exclusive, non-transferable, revocable license
-            to use the App on devices associated with your store account. No
-            ownership of the App, its branding, source code, or included content
-            is transferred to you.
+            to use the App on devices associated with your store account or
+            authorized through the App's supported paired-device process. A
+            Windows authorization derived from a mobile Pro entitlement does not
+            transfer or create ownership of the purchase. No ownership of the
+            App, its branding, source code, or included content is transferred
+            to you.
           </p>
         </section>
 
@@ -80,6 +84,8 @@
             <li>Obtaining authorization to collect, process, record, transmit, or share workplace and personal data.</li>
             <li>Protecting API keys, database credentials, devices, invitation passphrases, and exported files.</li>
             <li>Assigning and reviewing appropriate workspace and item permissions.</li>
+            <li>Pairing only devices you control or are authorized to use, and promptly revoking lost, transferred, or untrusted devices.</li>
+            <li>Confirming that queued changes, deletions, and file transfers reached every intended device or database.</li>
             <li>Following employer, customer, safety, quality, privacy, export, and industry requirements.</li>
           </ul>
         </section>
@@ -91,13 +97,56 @@
             represent that you have the rights and permissions necessary to use
             that content. Shared-workspace members may view, edit, invite, or
             delete content according to the permissions selected by workspace
-            owners and item owners. Do not treat App permissions as a substitute
-            for your organization's access-control, approval, or audit policies.
+            owners and item owners. Owners and authorized inviters are
+            responsible for whom they admit. Removing a member or changing a
+            permission cannot retrieve copies that a member previously viewed,
+            downloaded, exported, printed, or backed up. Do not treat App
+            permissions as a substitute for your organization's access-control,
+            approval, or audit policies.
+          </p>
+        </section>
+
+        <section id="paired-devices">
+          <h2><span>06</span> Paired devices and cross-device synchronization</h2>
+          <p>
+            A standalone Windows installation may be used locally within the
+            Free limits. To receive linked Pro access, Personal Connection sync,
+            or shared-workspace access, Windows must be authorized through the
+            supported pairing flow from a mobile installation with an active Pro
+            entitlement. A pairing invitation is time-limited, intended for one
+            redemption, and protected by a passphrase selected by the user. You
+            must send the invitation and passphrase securely and separately.
+          </p>
+          <p>
+            Pairing gives Windows its own authentication identity; it does not
+            copy the mobile device's store credential, database secret, or
+            authentication refresh token. Once paired, each device communicates
+            independently with the configured database and entitlement service.
+            The devices do not need a continuous direct connection to each
+            other, but internet access and the continued availability of the
+            configured services may be required.
+          </p>
+          <p>
+            The first authorized sync may combine records previously created on
+            mobile and Windows. When the same record was changed in more than one
+            place, the App generally keeps the newest recognized edit. Deletions
+            may synchronize later through deletion markers. Clock differences,
+            delayed connections, interrupted transfers, database changes, or
+            incompatible versions can delay synchronization or produce
+            conflicts. You must review important records and maintain independent
+            backups.
+          </p>
+          <p>
+            Device-local media paths do not transfer. Private files are available
+            on another device only after a permitted upload and verified
+            download through the configured storage service. Revoking a device
+            stops future authorized access after verification but does not erase
+            local files, exports, backups, or other copies already obtained.
           </p>
         </section>
 
         <section id="third-parties">
-          <h2><span>06</span> Third-party services and AI</h2>
+          <h2><span>07</span> Third-party services and AI</h2>
           <p>
             AI providers, Supabase and other databases, Apple, Google,
             RevenueCat, device platforms, and any custom endpoint you configure
@@ -114,13 +163,15 @@
         </section>
 
         <section id="purchase">
-          <h2><span>07</span> Free version and Pro Unlock</h2>
+          <h2><span>08</span> Free version and Pro Unlock</h2>
           <p>
             The Free version includes the limits and features displayed in the
             App. Pro Unlock is intended as a one-time, non-consumable in-app
             purchase recognized by the applicable store and RevenueCat
             entitlement. Prices, taxes, payment methods, family sharing, and
-            refund eligibility are determined by the store.
+            refund eligibility are determined by the store. Pro Unlock is
+            purchased and restored through a supported mobile store; the Windows
+            App does not process an independent store purchase.
           </p>
           <p>
             If a purchase is refunded, revoked, unavailable, or cannot be
@@ -130,10 +181,18 @@
             when reinstalling or changing devices on the same supported account
             and platform.
           </p>
+          <p>
+            An authorized Windows device periodically verifies the linked mobile
+            entitlement through the publisher service and may receive only a
+            limited cached grace period while offline. Windows Pro access may end
+            when the source entitlement is inactive, the link is revoked, the
+            verification service cannot confirm authorization beyond that grace
+            period, or these terms are materially violated.
+          </p>
         </section>
 
         <section id="acceptable-use">
-          <h2><span>08</span> Acceptable use</h2>
+          <h2><span>09</span> Acceptable use</h2>
           <p>You may not use the App to:</p>
           <ul>
             <li>Violate law, regulation, contract, privacy, intellectual-property, or other rights.</li>
@@ -145,19 +204,20 @@
         </section>
 
         <section id="availability">
-          <h2><span>09</span> Availability, changes, and backups</h2>
+          <h2><span>10</span> Availability, changes, synchronization, and backups</h2>
           <p>
             The App and third-party integrations may change, be interrupted, or
             become unavailable. Features may be modified to address security,
             legal, platform, or compatibility requirements. You are responsible
             for exporting or backing up records needed for business continuity
             and for verifying that queued or synchronized changes reached the
-            intended database.
+            intended database and authorized devices. Automatic synchronization
+            is not a substitute for a tested backup and recovery process.
           </p>
         </section>
 
         <section id="warranty">
-          <h2><span>10</span> Disclaimer of warranties</h2>
+          <h2><span>11</span> Disclaimer of warranties</h2>
           <p>
             To the fullest extent permitted by applicable law, the App is
             provided "as is" and "as available," without warranties of
@@ -169,29 +229,33 @@
         </section>
 
         <section id="liability">
-          <h2><span>11</span> Limitation of liability</h2>
+          <h2><span>12</span> Limitation of liability</h2>
           <p>
             To the fullest extent permitted by applicable law, the publisher is
             not liable for indirect, incidental, special, exemplary,
             consequential, or business-interruption losses arising from the App,
-            analysis results, lost data, shared-workspace activity, or
-            third-party services. Nothing in these terms excludes liability that
-            cannot legally be excluded.
+            analysis results, lost data, synchronization conflicts, delayed or
+            failed deletions, shared-workspace activity, paired-device access,
+            or third-party services. Nothing in these terms excludes liability
+            that cannot legally be excluded.
           </p>
         </section>
 
         <section id="termination">
-          <h2><span>12</span> Suspension and termination</h2>
+          <h2><span>13</span> Suspension and termination</h2>
           <p>
             You may stop using and uninstall the App at any time. Access may be
             restricted when required by law, store policy, security needs, or a
-            material violation of these terms. Sections that by their nature
-            should survive termination remain effective.
+            material violation of these terms. A workspace owner may remove a
+            member, and a primary mobile device may revoke a paired Windows
+            authorization. Revocation does not delete copies already retained by
+            another device or person. Sections that by their nature should
+            survive termination remain effective.
           </p>
         </section>
 
         <section id="changes">
-          <h2><span>13</span> Changes and contact</h2>
+          <h2><span>14</span> Changes and contact</h2>
           <p>
             These terms may be updated when the App, its providers, or legal
             requirements change. The effective date will be revised. Continued

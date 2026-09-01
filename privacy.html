@@ -1,9 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Privacy Policy for the Six Sigma mobile app.">
+    <meta name="description" content="Privacy Policy for the Six Sigma mobile and Windows apps.">
     <meta name="theme-color" content="#f7f7f4" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#07111f" media="(prefers-color-scheme: dark)">
     <title>Privacy Policy | Six Sigma</title>
@@ -26,10 +26,10 @@
       <aside class="legal-summary" aria-label="Document summary">
         <p class="eyebrow">LEGAL DOCUMENT</p>
         <h1>Privacy Policy</h1>
-        <p class="effective">Effective August 29, 2026</p>
+        <p class="effective">Effective August 31, 2026</p>
         <p>
-          This policy explains how the Six Sigma mobile app stores, transmits,
-          shares, protects, and deletes information.
+          This policy explains how the Six Sigma mobile and Windows apps store,
+          transmit, share, protect, and delete information.
         </p>
         <a class="button" href="mailto:nealwiechman@gmail.com?subject=Six%20Sigma%20Privacy%20Request">Privacy request</a>
       </aside>
@@ -38,17 +38,20 @@
         <section id="scope">
           <h2><span>01</span> Scope and contact</h2>
           <p>
-            This Privacy Policy applies to the Six Sigma mobile app (the
-            "App"). The publisher identified in the App's store listing is
-            responsible for the App. Questions, privacy requests, or support
-            requests may be sent to
+            This Privacy Policy applies to supported mobile and Windows desktop
+            versions of the Six Sigma app (the "App"). The publisher identified
+            in the App's store listing or distribution page is responsible for
+            the App. Questions, privacy requests, or support requests may be sent to
             <a href="mailto:nealwiechman@gmail.com">nealwiechman@gmail.com</a>.
           </p>
           <p>
             Six Sigma is primarily an offline productivity and analysis tool.
             It does not require a publisher-hosted username and password
-            account. Optional cloud, AI, shared-workspace, and purchase features
-            transmit limited information as described below.
+            account. The App may create pseudonymous authentication identities
+            to secure optional database connections, verify Pro Unlock, and link
+            authorized devices. Optional cloud, AI, shared-workspace,
+            cross-device, and purchase features transmit information as
+            described below.
           </p>
         </section>
 
@@ -62,10 +65,13 @@
             <li>A small, redacted diagnostic history when the App encounters an error.</li>
           </ul>
           <p>
-            API keys, database credentials, workspace passphrase verifiers, and
-            Supabase authentication refresh tokens are stored separately using
-            Android secure storage or Apple Keychain. Secret credential values
-            are excluded from JSON exports and work-data backups.
+            API keys, database credentials, workspace passphrase verifiers,
+            pairing credentials, and Supabase authentication refresh tokens are
+            stored separately using Android secure storage, Apple Keychain, or
+            Windows Credential Manager, as applicable. Secret credential values
+            are excluded from JSON exports and work-data backups. Files saved to
+            an external backup folder or another location you select remain
+            outside app-private storage and are controlled by you.
           </p>
         </section>
 
@@ -76,28 +82,87 @@
             the selected work data to the Supabase project or compatible HTTPS
             endpoint that you or your organization provides. This can include
             projects, workspaces, notes, meetings, comments, charts,
-            calculations, analyses, data sets, notifications, permissions, and
-            related metadata.
+            calculations, analyses, data sets, activity notifications,
+            permissions, file-transfer records, and related metadata. Private
+            attachment or media bytes may also be uploaded when you enable
+            transfer between authorized devices.
           </p>
           <p>
-            Supabase may assign an anonymous authentication identity to the App
-            installation. That identity and database row-level security are used
-            to authorize a personal row or shared-workspace membership. Shared
-            content is visible to members according to workspace and item-level
-            permissions. The database owner controls the connected database,
-            its geographic location, retention, logs, backups, and member
-            access.
+            Supabase may assign a separate pseudonymous authentication identity
+            to each App installation. Authentication identifiers, device or
+            member display names, roles, membership status, and activity times
+            may be stored to authorize a personal vault or shared-workspace
+            membership. Database row-level security limits access according to
+            those memberships and item-level permissions. The database owner
+            controls the connected database, its geographic location,
+            retention, logs, backups, and member access.
           </p>
           <p>
             If a shared database is temporarily unavailable and you choose to
             continue, pending work may be stored locally until the connection is
-            restored. The App does not operate a default publisher-hosted cloud
-            account for your work data.
+            restored. Your projects, notes, charts, calculations, media, and
+            other work data are not sent to the publisher's entitlement service;
+            they remain local or are sent to the database you or your
+            organization configured.
+          </p>
+        </section>
+
+        <section id="paired-devices">
+          <h2><span>04</span> Paired devices and cross-device synchronization</h2>
+          <p>
+            A Pro mobile installation may create a time-limited, one-time
+            invitation for an authorized Windows device. The invitation is
+            encrypted with a passphrase you choose and may contain the selected
+            Supabase endpoint, publishable key, personal-vault identifier,
+            one-time pairing capabilities, and an owner label. The App displays
+            the invitation as a QR code or encrypted text only when you request
+            it. Anyone who receives both the invitation and passphrase may try
+            to redeem it before it expires, so send them separately and only to
+            a device you control.
+          </p>
+          <p>
+            A paired device receives its own Supabase authentication identity;
+            the mobile device's refresh token, store credential, and database
+            secret are not copied to Windows. The user-controlled Personal
+            Connection may store the paired device's name, role, membership,
+            last activity, invitation-token hash, and revocation status. After
+            pairing, authorized records can synchronize through that database
+            without a direct phone-to-PC connection.
+          </p>
+          <p>
+            Device-local file paths do not synchronize. When private file
+            transfer is enabled, the App may upload file bytes and metadata
+            needed to identify, verify, and download the file through private
+            storage in the configured Supabase project. Until downloaded, the
+            other device may show a placeholder. In-App activity records may
+            synchronize, but operating-system notification history and read
+            state remain device-specific.
+          </p>
+          <p>
+            Synchronization may combine records created on different devices.
+            For competing edits to the same record, the App generally keeps the
+            newest recognized edit; deletions may be represented by a deletion
+            marker that propagates later. Revoking a paired device stops future
+            authorized access after verification, but it cannot erase copies,
+            exports, backups, or media already stored on that device.
+          </p>
+          <p>
+            The publisher-operated entitlement service stores only the
+            pseudonymous information needed to verify and link Pro access. This
+            may include a random authentication identifier used as a RevenueCat
+            App User ID, entitlement and product status, store and environment,
+            verification times, linked owner and device identifiers, a device
+            label and platform, link or revocation times, and one-time invitation
+            hashes and expirations. Hosting providers may also process IP
+            addresses and request logs as part of operating and securing the
+            service. Windows periodically contacts this service to verify Pro
+            access and may temporarily use a recent cached verification while
+            offline.
           </p>
         </section>
 
         <section id="ai">
-          <h2><span>04</span> Optional AI providers</h2>
+          <h2><span>05</span> Optional AI providers</h2>
           <p>
             AI is off unless you configure and enable it. When you request an AI
             output, the App sends your prompt and any project context you select
@@ -111,14 +176,14 @@
         </section>
 
         <section id="purchases">
-          <h2><span>05</span> Purchases and entitlement verification</h2>
+          <h2><span>06</span> Purchases and entitlement verification</h2>
           <p>
-            Google Play or Apple's App Store processes Pro Unlock payments. The
-            App uses RevenueCat to verify, restore, and revoke the entitlement.
-            RevenueCat receives an anonymous App user identifier, store,
-            product, transaction, and entitlement information and may provide
-            purchase-history dashboard analytics. The App does not receive your
-            complete payment-card number.
+            Google Play or Apple's App Store processes Pro Unlock payments on a
+            supported mobile device. The App uses RevenueCat to verify, restore,
+            and revoke the entitlement. RevenueCat receives a pseudonymous App
+            User ID, store, product, transaction, and entitlement information
+            and may provide purchase-history dashboard analytics. The App does
+            not receive your complete payment-card number.
           </p>
           <p>
             Automatic device identifier collection and RevenueCat diagnostics
@@ -126,26 +191,37 @@
             may independently process device, account, payment, fraud-prevention,
             and diagnostic information under their own policies.
           </p>
+          <p>
+            Windows does not process the mobile store purchase. An authorized
+            Windows installation checks the publisher entitlement service to
+            confirm that it remains linked to an active mobile Pro entitlement.
+          </p>
         </section>
 
         <section id="permissions">
-          <h2><span>06</span> Device permissions</h2>
+          <h2><span>07</span> Device permissions and hardware</h2>
           <ul>
-            <li><strong>Camera:</strong> used only for user-initiated data capture, document capture, invite scanning, or credential scanning.</li>
-            <li><strong>Microphone:</strong> used only for user-initiated audio notes and meeting recordings.</li>
+            <li><strong>Camera or webcam:</strong> used only for user-initiated data capture, document capture, invite scanning, or credential scanning.</li>
+            <li><strong>Microphone:</strong> used only for user-initiated audio notes and meeting recordings when compatible hardware is available.</li>
             <li><strong>Notifications:</strong> used for reminders, sync status, and shared-workspace activity.</li>
-            <li><strong>Files and media:</strong> used for documents, attachments, exports, and backup locations you select.</li>
+            <li><strong>Files and media:</strong> used for documents, attachments, exports, downloads, and backup locations you select.</li>
           </ul>
-          <p>You may control these permissions through your device settings.</p>
+          <p>
+            The App does not intentionally record camera or microphone input in
+            the background. Hardware availability and permission controls vary
+            by operating system, and you may change permissions through the
+            applicable device settings.
+          </p>
         </section>
 
         <section id="sharing">
-          <h2><span>07</span> How information is shared</h2>
+          <h2><span>08</span> How information is shared</h2>
           <p>The App shares or transmits information only as needed for:</p>
           <ul>
             <li>Services that you configure, including your selected database and AI provider.</li>
-            <li>Google Play, Apple's App Store, and RevenueCat for purchase processing and entitlement management.</li>
+            <li>Google Play, Apple's App Store, RevenueCat, and the publisher entitlement service for purchase and paired-device entitlement management.</li>
             <li>Workspace members with whom you intentionally share content.</li>
+            <li>Paired devices that you authorize to access a Personal Connection or private file transfer.</li>
             <li>Exports, email drafts, print jobs, or operating-system share actions that you initiate.</li>
             <li>Compliance with applicable law or protection of rights and safety when legally required.</li>
           </ul>
@@ -157,26 +233,39 @@
         </section>
 
         <section id="retention">
-          <h2><span>08</span> Retention, deletion, and control</h2>
+          <h2><span>09</span> Retention, deletion, and control</h2>
           <p>
             Settings &gt; Local Data allows you to delete local projects, notes,
             meetings, charts, calculations, analyses, data sets, imported files,
             media, diagnostics, and protected credentials. You can also remove
             the App to delete app-private local data, subject to operating-system
-            backup behavior and files you exported elsewhere.
+            backup behavior. Uninstalling the App does not remove exports,
+            selected backup folders, files downloaded elsewhere, or remote
+            database copies.
           </p>
           <p>
-            The App does not provide a publisher-hosted account because no such
-            account is required. Cloud copies are controlled by the owner of the
-            database you connected. Requests concerning data in a third-party or
-            organization-owned database should be directed to that database
-            owner. Purchase records remain subject to store and RevenueCat legal
-            and accounting retention requirements.
+            Synced edits and deletions may propagate to other authorized
+            devices, but propagation requires a working connection. Cloud copies
+            are controlled by the owner of the database you connected. Removing
+            a connection or revoking a member or paired device does not
+            automatically delete copies already downloaded, exported, or backed
+            up. Requests concerning data in a third-party or
+            organization-owned database should be directed to that database owner.
+          </p>
+          <p>
+            Publisher entitlement and paired-license records are retained as
+            needed to verify purchases, prevent abuse, provide support, honor
+            revocation, and satisfy legal or accounting requirements. Purchase
+            records remain subject to store and RevenueCat retention rules. You
+            may request deletion of publisher-controlled pseudonymous device or
+            entitlement-link data by contacting the email above, subject to
+            records the publisher must retain. Such a request does not delete
+            work data held in a database controlled by you or your organization.
           </p>
         </section>
 
         <section id="diagnostics">
-          <h2><span>09</span> Local diagnostics</h2>
+          <h2><span>10</span> Local diagnostics</h2>
           <p>
             Runtime errors may be retained in a count- and size-limited history
             in app-private storage. The App redacts values resembling
@@ -187,19 +276,21 @@
         </section>
 
         <section id="security">
-          <h2><span>10</span> Security</h2>
+          <h2><span>11</span> Security</h2>
           <p>
             The App uses platform-protected credential storage, HTTPS,
             authenticated requests, and database row-level security where
-            configured. No method of storage or transmission is completely
-            secure. You are responsible for protecting provider credentials,
-            invitation passphrases, exported files, unlocked devices, and the
-            databases you connect.
+            configured. Pairing and workspace invitations use one-time
+            capabilities, expiration, and passphrase protection where provided.
+            No method of storage or transmission is completely secure. You are
+            responsible for protecting provider credentials, invitation
+            passphrases, exported files, unlocked devices, and the databases you
+            connect, and for revoking devices that are lost or no longer trusted.
           </p>
         </section>
 
         <section id="children">
-          <h2><span>11</span> Children</h2>
+          <h2><span>12</span> Children</h2>
           <p>
             Six Sigma is a professional productivity tool and is not directed
             to children under 13. The publisher does not knowingly solicit
@@ -208,20 +299,21 @@
         </section>
 
         <section id="international">
-          <h2><span>12</span> International processing and your rights</h2>
+          <h2><span>13</span> International processing and your rights</h2>
           <p>
             Services you choose may process information in countries other than
             your own. Depending on your location, you may have rights to access,
             correct, delete, restrict, or object to certain processing. Because
             most work data remains local or is sent to services you configure,
             use the App's deletion controls and contact the relevant service or
-            database owner first. You may also contact the publisher at
+            database owner first. For publisher-controlled entitlement or
+            paired-license records, you may contact the publisher at
             <a href="mailto:nealwiechman@gmail.com">nealwiechman@gmail.com</a>.
           </p>
         </section>
 
         <section id="changes">
-          <h2><span>13</span> Changes to this policy</h2>
+          <h2><span>14</span> Changes to this policy</h2>
           <p>
             This policy may be updated when the App, its providers, or legal
             requirements change. The effective date at the top of this page
