@@ -19,6 +19,7 @@
       <nav aria-label="Legal documents">
         <a aria-current="page" href="privacy.html">Privacy</a>
         <a href="terms.html">Terms</a>
+        <a href="provider-setup.html">Provider setup</a>
       </nav>
     </header>
 
@@ -26,7 +27,7 @@
       <aside class="legal-summary" aria-label="Document summary">
         <p class="eyebrow">LEGAL DOCUMENT</p>
         <h1>Privacy Policy</h1>
-        <p class="effective">Effective August 31, 2026</p>
+        <p class="effective">Effective September 2, 2026</p>
         <p>
           This policy explains how the Lean Six Sigma Toolbox mobile and Windows apps store,
           transmit, share, protect, and delete information.
@@ -66,7 +67,7 @@
           </ul>
           <p>
             API keys, database credentials, workspace passphrase verifiers,
-            pairing credentials, and Supabase authentication refresh tokens are
+            pairing credentials, and provider authentication refresh tokens are
             stored separately using Android secure storage, Apple Keychain, or
             Windows Credential Manager, as applicable. Secret credential values
             are excluded from JSON exports and work-data backups. Files saved to
@@ -79,8 +80,9 @@
           <h2><span>03</span> Optional cloud and shared-workspace connections</h2>
           <p>
             When you configure a Personal or Shared Connection, the App sends
-            the selected work data to the Supabase project or compatible HTTPS
-            endpoint that you or your organization provides. This can include
+            selected work data to the Supabase project, Firebase project,
+            MySQL gateway, or compatible HTTPS endpoint that you or your
+            organization provides. This can include
             projects, workspaces, notes, meetings, comments, charts,
             calculations, analyses, data sets, activity notifications,
             permissions, file-transfer records, and related metadata. Private
@@ -88,12 +90,16 @@
             transfer between authorized devices.
           </p>
           <p>
-            Supabase may assign a separate pseudonymous authentication identity
-            to each App installation. Authentication identifiers, device or
+            Supabase, Firebase, MySQL gateways, and custom providers may assign
+            a separate pseudonymous authentication identity to each App
+            installation. Authentication identifiers, device or
             member display names, roles, membership status, and activity times
             may be stored to authorize a personal vault or shared-workspace
-            membership. Database row-level security limits access according to
-            those memberships and item-level permissions. The database owner
+            membership. Supabase uses database row-level security; Firebase
+            uses a server-side Admin Function with direct Firestore and Storage
+            client access denied; MySQL and custom providers use their HTTPS
+            gateway as the authorization boundary. The provider must limit
+            access according to memberships and item-level permissions. The database owner
             controls the connected database, its geographic location,
             retention, logs, backups, and member access.
           </p>
@@ -113,7 +119,7 @@
             A Pro mobile installation may create a time-limited, one-time
             invitation for an authorized Windows device. The invitation is
             encrypted with a passphrase you choose and may contain the selected
-            Supabase endpoint, publishable key, personal-vault identifier,
+            provider endpoint, public client key, personal-vault identifier,
             one-time pairing capabilities, and an owner label. The App displays
             the invitation as a QR code or encrypted text only when you request
             it. Anyone who receives both the invitation and passphrase may try
@@ -121,7 +127,7 @@
             a device you control.
           </p>
           <p>
-            A paired device receives its own Supabase authentication identity;
+            A paired device receives its own provider authentication identity;
             the mobile device's refresh token, store credential, and database
             secret are not copied to Windows. The user-controlled Personal
             Connection may store the paired device's name, role, membership,
@@ -133,7 +139,7 @@
             Device-local file paths do not synchronize. When private file
             transfer is enabled, the App may upload file bytes and metadata
             needed to identify, verify, and download the file through private
-            storage in the configured Supabase project. Until downloaded, the
+            storage in the configured provider. Until downloaded, the
             other device may show a placeholder. In-App activity records may
             synchronize, but operating-system notification history and read
             state remain device-specific.
@@ -279,8 +285,10 @@
           <h2><span>11</span> Security</h2>
           <p>
             The App uses platform-protected credential storage, HTTPS,
-            authenticated requests, and database row-level security where
-            configured. Pairing and workspace invitations use one-time
+            authenticated requests, and provider-side membership checks.
+            Supabase connections use RLS; Firebase and gateway connections keep
+            administrator credentials server-side and use verified device
+            identities. Pairing and workspace invitations use one-time
             capabilities, expiration, and passphrase protection where provided.
             No method of storage or transmission is completely secure. You are
             responsible for protecting provider credentials, invitation

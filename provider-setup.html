@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Database provider setup for the Lean Six Sigma Toolbox mobile and Windows apps.">
+    <meta name="theme-color" content="#f7f7f4" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#07111f" media="(prefers-color-scheme: dark)">
+    <title>Database Provider Setup | Lean Six Sigma Toolbox</title>
+    <link rel="icon" href="assets/six-sigma-icon.png">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="Lean Six Sigma Toolbox legal home">
+        <img src="assets/six-sigma-icon.png" alt="" width="44" height="44">
+        <span><strong>Lean Six Sigma Toolbox</strong><small>Provider setup</small></span>
+      </a>
+      <nav aria-label="Legal and setup documents">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a aria-current="page" href="provider-setup.html">Provider setup</a>
+      </nav>
+    </header>
+
+    <main class="legal-layout">
+      <aside class="legal-summary" aria-label="Page summary">
+        <p class="eyebrow">DATABASE SETUP</p>
+        <h1>Choose your sync provider</h1>
+        <p class="effective">Updated September 2, 2026</p>
+        <p>
+          Personal and Shared Connections can use Supabase, Firebase, the
+          bundled MySQL gateway, or another compatible HTTPS service.
+        </p>
+        <a class="button" href="https://github.com/NealW1993/six-sigma/tree/main/provider_servers">Open server kits</a>
+      </aside>
+
+      <article class="legal-document">
+        <section id="architecture">
+          <h2><span>01</span> What goes in the app</h2>
+          <p>
+            The app accepts an HTTPS endpoint, a mobile-safe public client key,
+            and, only when needed, a temporary setup token. Database passwords,
+            Firebase service accounts, JWT signing secrets, MySQL root
+            credentials, and provider admin keys must stay on the server. Each
+            device receives its own identity and rotating refresh token.
+            Never paste these values into the app.
+          </p>
+          <p>
+            The publisher Supabase project used to verify optional Windows Pro
+            linking is separate. It does not store projects, notes, tools,
+            charts, shared-workspace content, or attachment bytes.
+          </p>
+        </section>
+
+        <section id="supabase">
+          <h2><span>02</span> Supabase</h2>
+          <ol>
+            <li>Create a project and enable Authentication &gt; Sign-in Providers &gt; Anonymous.</li>
+            <li>In the app, open the visible Personal or Shared initial SQL + RLS panel and copy the complete script.</li>
+            <li>Run the script once in Supabase SQL Editor. It creates tables, Auth membership, one-time invites, RLS policies, RPCs, and private Storage policies.</li>
+            <li>Copy the Project URL and append the table path shown in the app.</li>
+            <li>Copy an <code>sb_publishable_</code> key or legacy anon key. Never use <code>sb_secret_</code> or <code>service_role</code>.</li>
+            <li>Save and run Test connection before turning on synchronization.</li>
+          </ol>
+          <p>
+            An optional <code>sbp_</code> Personal Access Token can automate
+            first-time setup. Revoke it after setup. RLS is the data boundary;
+            the publishable key alone does not grant row access.
+          </p>
+          <p><a href="https://supabase.com/dashboard/projects">Open Supabase projects</a> &middot; <a href="https://supabase.com/docs/guides/database/postgres/row-level-security">RLS documentation</a></p>
+        </section>
+
+        <section id="firebase">
+          <h2><span>03</span> Firebase</h2>
+          <ol>
+            <li>Create a Firebase project and enable Anonymous Authentication.</li>
+            <li>Create Firestore and Cloud Storage in the same project.</li>
+            <li>Download the <a href="https://github.com/NealW1993/six-sigma/tree/main/provider_servers/firebase">Firebase server kit</a>.</li>
+            <li>Use Node.js 22 and Firebase CLI. Set unrelated <code>SIX_SIGMA_CLIENT_KEY</code> and <code>SIX_SIGMA_SETUP_TOKEN</code> secrets.</li>
+            <li>Deploy the Function, Firestore rules, and Storage rules. Direct client access is denied; only the Admin Function handles data.</li>
+            <li>In the app choose Firebase, paste the deployed <code>sixSigmaApi</code> URL and the Web API key from Project settings &gt; General.</li>
+          </ol>
+          <p>
+            Set <code>SIX_SIGMA_CLIENT_KEY</code> to the Web API key entered in
+            the app. Authorization still requires a verified Firebase ID token
+            plus server-side vault/workspace membership. Attachments use
+            object- and method-scoped signed URLs that expire after five
+            minutes. An already issued URL remains usable until it expires,
+            even if the device is revoked during that interval.
+          </p>
+          <p><a href="https://console.firebase.google.com/">Open Firebase Console</a> &middot; <a href="https://firebase.google.com/docs/auth/web/anonymous-auth">Anonymous Auth guide</a> &middot; <a href="https://firebase.google.com/docs/functions/get-started">Functions guide</a></p>
+        </section>
+
+        <section id="mysql">
+          <h2><span>04</span> MySQL</h2>
+          <p>
+            The mobile or Windows app never connects to port 3306. Deploy the
+            <a href="https://github.com/NealW1993/six-sigma/tree/main/provider_servers/mysql">Deno/MySQL server kit</a>
+            and put its port 8080 behind an HTTPS reverse proxy.
+          </p>
+          <ol>
+            <li>Copy <code>.env.example</code> to <code>.env</code> and generate a unique database password, JWT secret, public client key, setup token, and MySQL root password.</li>
+            <li>Run <code>docker compose up -d --build</code>. A new database volume automatically runs the complete <code>schema.sql</code>.</li>
+            <li>Keep MySQL on the private Docker network. Expose only the gateway through HTTPS.</li>
+            <li>Configure request limits, rate limiting, redacted access logs, database backups, file backups, and restore tests.</li>
+            <li>Choose MySQL server in the app and enter <code>https://your-host/api</code>, <code>SIX_SIGMA_CLIENT_KEY</code>, and the setup token for first owner setup.</li>
+          </ol>
+          <p>
+            MySQL does not provide PostgreSQL RLS. The gateway is therefore the
+            mandatory authorization boundary: it binds writes to the verified
+            device identity and checks active vault/workspace membership for
+            every read, write, invite, permission, and file operation.
+          </p>
+          <p><a href="https://docs.docker.com/get-started/get-docker/">Install Docker</a> &middot; <a href="https://dev.mysql.com/doc/refman/8.4/en/security.html">MySQL security guidance</a></p>
+        </section>
+
+        <section id="custom">
+          <h2><span>05</span> Custom HTTPS provider</h2>
+          <p>
+            Implement the
+            <a href="https://github.com/NealW1993/six-sigma/tree/main/provider_protocol">Sync Protocol v1 OpenAPI contract</a>.
+            The provider may use PostgreSQL, SQL Server, MongoDB, DynamoDB,
+            Firebase, MySQL, or another durable store, but it must preserve the
+            protocol's authorization behavior.
+          </p>
+          <ul>
+            <li>Issue independent device identities and rotating refresh tokens; store refresh and invitation token hashes only.</li>
+            <li>Atomically consume invitations and enforce owner/member/inviter roles.</li>
+            <li>Ignore a conflicting client <code>user_id</code> and bind writes to the authenticated identity.</li>
+            <li>Return attachment URLs scoped to one object and HTTP method with an expiration no longer than 15 minutes.</li>
+            <li>Never return database credentials, signing keys, admin tokens, refresh hashes, or another device's token.</li>
+          </ul>
+          <p>
+            The in-app test verifies protocol negotiation and authentication.
+            The service owner remains responsible for code review, dependency
+            auditing, penetration testing, monitoring, backups, and incident
+            response.
+          </p>
+        </section>
+
+        <section id="verify">
+          <h2><span>06</span> Verify before use</h2>
+          <ul>
+            <li>Use separate Personal and Shared scopes and test with two unrelated device identities.</li>
+            <li>Confirm a non-member receives HTTP 403 for every vault/workspace operation.</li>
+            <li>Confirm copied public keys cannot read data without a valid identity.</li>
+            <li>Confirm consumed invitations and rotated refresh tokens cannot be reused.</li>
+            <li>Confirm logs redact Authorization, client keys, setup tokens, invitation values, and URL query tokens.</li>
+            <li>Restore a backup in a non-production environment before trusting the service with important work.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 Lean Six Sigma Toolbox. All rights reserved.</p>
+      <p><a href="privacy.html">Privacy Policy</a> &middot; <a href="terms.html">Terms of Use</a></p>
+    </footer>
+  </body>
+</html>
