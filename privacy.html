@@ -203,6 +203,17 @@
             before recording or submitting it. Local QR decoding does not, by
             itself, send camera frames to an AI provider.
           </p>
+          <p>
+            A request started in the AI tab can continue while you navigate away
+            or background the App, subject to device limits. The request stays
+            between your device and your selected provider; it does not pass
+            through a new publisher-hosted job server. Completed responses are
+            saved to Recent outputs. Completion notifications use generic text,
+            not your prompt or response, and follow your notification settings.
+            Android uses a temporary foreground-service notification and wake
+            lock during the request. Fully exiting or force-stopping may
+            interrupt an unfinished request.
+          </p>
         </section>
 
         <section id="purchases">
@@ -233,7 +244,7 @@
           <ul>
             <li><strong>Camera or webcam:</strong> used only for user-initiated data capture, document capture, invite scanning, or credential scanning.</li>
             <li><strong>Microphone:</strong> used only for user-initiated audio notes and meeting recordings when compatible hardware is available.</li>
-            <li><strong>Notifications:</strong> used for reminders, sync status, and team-workspace activity.</li>
+            <li><strong>Notifications:</strong> used for reminders, sync status, team-workspace activity, and AI completion. Android also shows required foreground-service progress notifications while generating an AI tab response.</li>
             <li><strong>Files and media:</strong> used for documents, attachments, exports, downloads, and backup locations you select.</li>
           </ul>
           <p>
