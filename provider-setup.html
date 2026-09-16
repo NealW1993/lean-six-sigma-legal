@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Database provider setup for the Lean Six Sigma Toolbox mobile and Windows apps.">
-    <meta name="theme-color" content="#f7f7f4" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#07111f" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f5f7f7" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#121619" media="(prefers-color-scheme: dark)">
     <title>Database Provider Setup | Lean Six Sigma Toolbox</title>
     <link rel="icon" href="assets/six-sigma-icon.png">
     <link rel="stylesheet" href="styles.css">
@@ -27,12 +27,19 @@
       <aside class="legal-summary" aria-label="Page summary">
         <p class="eyebrow">DATABASE SETUP</p>
         <h1>Choose your sync provider</h1>
-        <p class="effective">Updated September 2, 2026</p>
+        <p class="effective">Updated September 16, 2026</p>
         <p>
-          Personal and Shared Connections can use Supabase, Firebase, the
+          Personal and Team Workspaces can use Supabase, Firebase, the
           bundled MySQL gateway, or another compatible HTTPS service.
         </p>
-        <a class="button" href="https://github.com/NealW1993/six-sigma/tree/main/provider_servers">Open server kits</a>
+        <a class="button" href="https://github.com/NealW1993/lean-six-sigma-legal/tree/main/provider_servers">Open server kits</a>
+        <nav class="section-nav" aria-label="Choose a provider">
+          <a href="#supabase">Supabase</a>
+          <a href="#firebase">Firebase</a>
+          <a href="#mysql">MySQL</a>
+          <a href="#custom">Custom HTTPS</a>
+          <a href="#verify">Readiness checklist</a>
+        </nav>
       </aside>
 
       <article class="legal-document">
@@ -44,12 +51,12 @@
             Firebase service accounts, JWT signing secrets, MySQL root
             credentials, and provider admin keys must stay on the server. Each
             device receives its own identity and rotating refresh token.
-            Never paste these values into the app.
+            Never enter server administrator secrets in client connection fields.
           </p>
           <p>
             The publisher Supabase project used to verify optional Windows Pro
             linking is separate. It does not store projects, notes, tools,
-            charts, shared-workspace content, or attachment bytes.
+            charts, team-workspace content, or attachment bytes.
           </p>
         </section>
 
@@ -57,11 +64,11 @@
           <h2><span>02</span> Supabase</h2>
           <ol>
             <li>Create a project and enable Authentication &gt; Sign-in Providers &gt; Anonymous.</li>
-            <li>In the app, open the visible Personal or Shared initial SQL + RLS panel and copy the complete script.</li>
-            <li>Run the script once in Supabase SQL Editor. It creates tables, Auth membership, one-time invites, RLS policies, RPCs, and private Storage policies.</li>
+            <li>In Settings, open Personal Connection or Team Workspaces, expand provider setup, and copy the complete initial SQL + RLS script.</li>
+            <li>In Supabase SQL Editor, check the Database dropdown and choose no row limit if the editor currently limits results. This affects displayed results, not the app's access permissions. Paste and run the complete script; confirm there are no SQL errors. It creates tables, membership, one-time invites, RLS policies, RPCs, and private Storage policies.</li>
             <li>Copy the Project URL and append the table path shown in the app.</li>
             <li>Copy an <code>sb_publishable_</code> key or legacy anon key. Never use <code>sb_secret_</code> or <code>service_role</code>.</li>
-            <li>Save and run Test connection before turning on synchronization.</li>
+            <li>Save and run Test connection before turning on synchronization or creating an encrypted pairing key.</li>
           </ol>
           <p>
             An optional <code>sbp_</code> Personal Access Token can automate
@@ -76,11 +83,17 @@
           <ol>
             <li>Create a Firebase project and enable Anonymous Authentication.</li>
             <li>Create Firestore and Cloud Storage in the same project.</li>
-            <li>Download the <a href="https://github.com/NealW1993/six-sigma/tree/main/provider_servers/firebase">Firebase server kit</a>.</li>
-            <li>Use Node.js 22 and Firebase CLI. Set unrelated <code>SIX_SIGMA_CLIENT_KEY</code> and <code>SIX_SIGMA_SETUP_TOKEN</code> secrets.</li>
-            <li>Deploy the Function, Firestore rules, and Storage rules. Direct client access is denied; only the Admin Function handles data.</li>
+            <li>Download the <a href="https://github.com/NealW1993/lean-six-sigma-legal/tree/main/provider_servers/firebase">Firebase server kit</a>.</li>
+            <li>Use Node.js 22 and Firebase CLI. Set <code>SIX_SIGMA_CLIENT_KEY</code> to this project's Firebase Web API key. Generate a separate cryptographically random <code>SIX_SIGMA_SETUP_TOKEN</code> of at least 32 bytes for owner setup. Do not reuse either value as the other.</li>
+            <li>From the kit root, deploy the Function, Firestore rules, and Storage rules. Direct client access is denied; only the Admin Function handles data.</li>
             <li>In the app choose Firebase, paste the deployed <code>sixSigmaApi</code> URL and the Web API key from Project settings &gt; General.</li>
           </ol>
+          <p>
+            Test the connection and first-owner setup before pairing another
+            device. The Web API key identifies the Firebase project; it is not
+            a database administrator credential. Never use a service-account
+            JSON file or private key in the app.
+          </p>
           <p>
             Set <code>SIX_SIGMA_CLIENT_KEY</code> to the Web API key entered in
             the app. Authorization still requires a verified Firebase ID token
@@ -96,7 +109,7 @@
           <h2><span>04</span> MySQL</h2>
           <p>
             The mobile or Windows app never connects to port 3306. Deploy the
-            <a href="https://github.com/NealW1993/six-sigma/tree/main/provider_servers/mysql">Deno/MySQL server kit</a>
+            <a href="https://github.com/NealW1993/lean-six-sigma-legal/tree/main/provider_servers/mysql">Deno/MySQL server kit</a>
             and put its port 8080 behind an HTTPS reverse proxy.
           </p>
           <ol>
@@ -112,6 +125,13 @@
             device identity and checks active vault/workspace membership for
             every read, write, invite, permission, and file operation.
           </p>
+          <p>
+            Upgrading an existing installation does not rerun
+            <code>schema.sql</code> automatically: database initialization applies
+            only to a new volume. Back up the database and attachments, review
+            schema changes, and test an upgrade and restore on a separate instance.
+            Do not delete a production volume to force setup.
+          </p>
           <p><a href="https://docs.docker.com/get-started/get-docker/">Install Docker</a> &middot; <a href="https://dev.mysql.com/doc/refman/8.4/en/security.html">MySQL security guidance</a></p>
         </section>
 
@@ -119,7 +139,7 @@
           <h2><span>05</span> Custom HTTPS provider</h2>
           <p>
             Implement the
-            <a href="https://github.com/NealW1993/six-sigma/tree/main/provider_protocol">Sync Protocol v1 OpenAPI contract</a>.
+            <a href="https://github.com/NealW1993/lean-six-sigma-legal/tree/main/provider_protocol">Sync Protocol v1 OpenAPI contract</a>.
             The provider may use PostgreSQL, SQL Server, MongoDB, DynamoDB,
             Firebase, MySQL, or another durable store, but it must preserve the
             protocol's authorization behavior.
@@ -142,7 +162,9 @@
         <section id="verify">
           <h2><span>06</span> Verify before use</h2>
           <ul>
-            <li>Use separate Personal and Shared scopes and test with two unrelated device identities.</li>
+            <li>Use separate Personal and Team Workspace scopes and test with two unrelated device identities.</li>
+            <li>Complete setup and Test connection before generating an invite. Pair a second device, make one edit, sync, and confirm it arrives on the first.</li>
+            <li>Revoke that test device and confirm new authorized requests fail. Already downloaded files and unexpired signed URLs are not erased by revocation.</li>
             <li>Confirm a non-member receives HTTP 403 for every vault/workspace operation.</li>
             <li>Confirm copied public keys cannot read data without a valid identity.</li>
             <li>Confirm consumed invitations and rotated refresh tokens cannot be reused.</li>

@@ -1,0 +1,44 @@
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: six_sigma_sync
+      MYSQL_USER: six_sigma_app
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    networks: [private]
+  storage-init:
+    image: busybox:1.37
+    command: ["sh", "-c", "chown -R 1993:1993 /data/files"]
+    volumes:
+      - attachment_data:/data/files
+    networks: [private]
+  sync:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      mysql:
+        condition: service_started
+      storage-init:
+        condition: service_completed_successfully
+    volumes:
+      - attachment_data:/data/files
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks: [private]
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+volumes:
+  mysql_data:
+  attachment_data:
+networks:
+  private:

@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Privacy Policy for the Lean Six Sigma Toolbox mobile and Windows apps.">
-    <meta name="theme-color" content="#f7f7f4" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#07111f" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f5f7f7" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#121619" media="(prefers-color-scheme: dark)">
     <title>Privacy Policy | Lean Six Sigma Toolbox</title>
     <link rel="icon" href="assets/six-sigma-icon.png">
     <link rel="stylesheet" href="styles.css">
@@ -27,12 +27,18 @@
       <aside class="legal-summary" aria-label="Document summary">
         <p class="eyebrow">LEGAL DOCUMENT</p>
         <h1>Privacy Policy</h1>
-        <p class="effective">Effective September 2, 2026</p>
+        <p class="effective">Effective September 16, 2026</p>
         <p>
           This policy explains how the Lean Six Sigma Toolbox mobile and Windows apps store,
           transmit, share, protect, and delete information.
         </p>
         <a class="button" href="mailto:nealwiechman@gmail.com?subject=Six%20Sigma%20Privacy%20Request">Privacy request</a>
+        <nav class="section-nav" aria-label="Privacy sections">
+          <a href="#cloud">Cloud and devices</a>
+          <a href="#ai">AI and recordings</a>
+          <a href="#retention">Delete or export data</a>
+          <a href="#security">Security</a>
+        </nav>
       </aside>
 
       <article class="legal-document">
@@ -50,7 +56,7 @@
             It does not require a publisher-hosted username and password
             account. The App may create pseudonymous authentication identities
             to secure optional database connections, verify Pro Unlock, and link
-            authorized devices. Optional cloud, AI, shared-workspace,
+            authorized devices. Optional cloud, AI, team-workspace,
             cross-device, and purchase features transmit information as
             described below.
           </p>
@@ -77,9 +83,9 @@
         </section>
 
         <section id="cloud">
-          <h2><span>03</span> Optional cloud and shared-workspace connections</h2>
+          <h2><span>03</span> Optional cloud and team-workspace connections</h2>
           <p>
-            When you configure a Personal or Shared Connection, the App sends
+            When you configure a Personal or Team Workspace, the App sends
             selected work data to the Supabase project, Firebase project,
             MySQL gateway, or compatible HTTPS endpoint that you or your
             organization provides. This can include
@@ -94,7 +100,7 @@
             a separate pseudonymous authentication identity to each App
             installation. Authentication identifiers, device or
             member display names, roles, membership status, and activity times
-            may be stored to authorize a personal vault or shared-workspace
+            may be stored to authorize a personal vault or team-workspace
             membership. Supabase uses database row-level security; Firebase
             uses a server-side Admin Function with direct Firestore and Storage
             client access denied; MySQL and custom providers use their HTTPS
@@ -104,7 +110,7 @@
             retention, logs, backups, and member access.
           </p>
           <p>
-            If a shared database is temporarily unavailable and you choose to
+            If a team database is temporarily unavailable and you choose to
             continue, pending work may be stored locally until the connection is
             restored. Your projects, notes, charts, calculations, media, and
             other work data are not sent to the publisher's entitlement service;
@@ -170,6 +176,14 @@
         <section id="ai">
           <h2><span>05</span> Optional AI providers</h2>
           <p>
+            The default Explain this option generates an app-based explanation
+            on the device without sending inputs or results to an AI provider.
+            Explain with AI is a separate optional Pro action that sends the
+            displayed tool inputs and results to your configured provider.
+            Explanation notes you save follow your usual backup and workspace
+            synchronization choices; offline generation does not disable sync.
+          </p>
+          <p>
             AI is off unless you configure and enable it. When you request an AI
             output, the App sends your prompt and any project context you select
             directly to the provider you configured, such as OpenAI, Google
@@ -178,6 +192,16 @@
             and terms. Do not submit confidential, regulated, or personal data
             unless you are authorized to do so and accept the provider's data
             practices.
+          </p>
+          <p>
+            Image extraction sends the image or document page you select,
+            including the selected crop, to the configured AI provider. Audio
+            transcription sends a recording to OpenAI or Gemini when you request
+            it; generating a summary sends the transcript to your selected
+            summary provider. These requests may contain personal or workplace
+            information. Review the selection and obtain any required consent
+            before recording or submitting it. Local QR decoding does not, by
+            itself, send camera frames to an AI provider.
           </p>
         </section>
 
@@ -209,7 +233,7 @@
           <ul>
             <li><strong>Camera or webcam:</strong> used only for user-initiated data capture, document capture, invite scanning, or credential scanning.</li>
             <li><strong>Microphone:</strong> used only for user-initiated audio notes and meeting recordings when compatible hardware is available.</li>
-            <li><strong>Notifications:</strong> used for reminders, sync status, and shared-workspace activity.</li>
+            <li><strong>Notifications:</strong> used for reminders, sync status, and team-workspace activity.</li>
             <li><strong>Files and media:</strong> used for documents, attachments, exports, downloads, and backup locations you select.</li>
           </ul>
           <p>
@@ -241,9 +265,13 @@
         <section id="retention">
           <h2><span>09</span> Retention, deletion, and control</h2>
           <p>
-            Settings &gt; Local Data allows you to delete local projects, notes,
-            meetings, charts, calculations, analyses, data sets, imported files,
-            media, diagnostics, and protected credentials. You can also remove
+            Settings &gt; Demos &amp; data &gt; Clear data removes selected
+            personal work and associated local attachments, and offers removal
+            of imported source documents. It keeps settings, saved connections,
+            and protected credentials, and does not clear active Team Workspace
+            data. Personal deletions can propagate to connected devices.
+            Diagnostics have a separate clear control in Legal &amp; privacy.
+            You can also remove
             the App to delete app-private local data, subject to operating-system
             backup behavior. Uninstalling the App does not remove exports,
             selected backup folders, files downloaded elsewhere, or remote

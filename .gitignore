@@ -1,1 +1,12 @@
 preview/
+.env
+.env.*
+!.env.example
+.firebaserc
+node_modules/
+provider_servers/firebase/functions/lib/
+firebase-debug.log
+*.pem
+*.key
+service-account*.json
+*credentials*.json

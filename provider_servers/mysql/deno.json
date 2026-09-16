@@ -1,0 +1,11 @@
+{
+  "tasks": {
+    "check": "deno check main.ts && deno lint main.ts",
+    "test:integration": "deno test --allow-env --allow-net integration_test.ts",
+    "start": "deno run --allow-env --allow-net --allow-read --allow-write main.ts"
+  },
+  "imports": {
+    "jose": "npm:jose@6.1.0",
+    "mysql2/promise": "npm:mysql2@3.14.4/promise"
+  }
+}

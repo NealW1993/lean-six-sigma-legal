@@ -1,0 +1,111 @@
+openapi: 3.1.0
+info:
+  title: Lean Six Sigma Sync Provider
+  version: 1.0.0
+  description: Provider-neutral synchronization gateway used by Lean Six Sigma Toolbox.
+servers:
+  - url: https://sync.example.com
+paths:
+  /api:
+    post:
+      operationId: syncOperation
+      description: >-
+        The client key is required for every operation. A bearer device token
+        is additionally required for every operation except capabilities,
+        auth_anonymous, and auth_refresh.
+      security:
+        - clientKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+      responses:
+        '200':
+          description: Operation completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400': {description: Invalid request or unsupported protocol version.}
+        '401': {description: Missing or invalid device identity.}
+        '403': {description: Authenticated but not authorized for the vault/workspace.}
+        '409': {description: Invite consumed, owner conflict, or duplicate membership.}
+components:
+  securitySchemes:
+    clientKey:
+      type: apiKey
+      in: header
+      name: X-Six-Sigma-Client-Key
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Request:
+      type: object
+      additionalProperties: false
+      required: [protocol, version, operation, data]
+      properties:
+        protocol: {const: lean-six-sigma-sync}
+        version: {const: 1}
+        operation:
+          type: string
+          enum:
+            - capabilities
+            - auth_anonymous
+            - auth_refresh
+            - initialize_personal_schema
+            - initialize_personal_vault
+            - personal_vault_membership
+            - create_personal_invite
+            - redeem_personal_invite
+            - list_personal_devices
+            - rename_personal_device
+            - revoke_personal_device
+            - touch_personal_device
+            - publish_personal_key_update
+            - personal_key_update
+            - confirm_personal_key_update
+            - personal_key_update_status
+            - cancel_personal_key_update
+            - push_personal_snapshot
+            - pull_personal_snapshots
+            - initialize_workspace
+            - repair_workspace_owner
+            - create_workspace_invite
+            - redeem_workspace_invite
+            - workspace_permissions
+            - set_workspace_display_name
+            - list_workspace_members
+            - set_member_invite_permission
+            - push_shared_snapshot
+            - pull_shared_snapshots
+            - attachment_upload_url
+            - attachment_download_url
+            - attachment_delete
+        data: {type: object}
+    Success:
+      type: object
+      additionalProperties: false
+      required: [ok, data]
+      properties:
+        ok: {const: true}
+        data: {}
+    Failure:
+      type: object
+      additionalProperties: false
+      required: [ok, code, error]
+      properties:
+        ok: {const: false}
+        code: {type: string}
+        error: {type: string}
+    Session:
+      type: object
+      required: [user_id, access_token, refresh_token, expires_in]
+      properties:
+        user_id: {type: string}
+        access_token: {type: string}
+        refresh_token: {type: string}
+        expires_in: {type: integer, minimum: 60, maximum: 86400}

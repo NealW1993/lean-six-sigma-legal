@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // All sync access is mediated by the Admin SDK in sixSigmaApi. This
+    // prevents a copied Firebase API key or ID token from bypassing gateway
+    // membership checks with the Firestore client API.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

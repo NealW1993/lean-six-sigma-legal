@@ -1,0 +1,10 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // The gateway issues object- and method-scoped signed URLs after checking
+    // vault/workspace membership. Firebase client SDK access remains closed.
+    match /{object=**} {
+      allow read, write: if false;
+    }
+  }
+}
