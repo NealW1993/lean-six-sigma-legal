@@ -1,6 +1,19 @@
-# Six Sigma Legal Pages
+# Lean Six Sigma Toolbox legal and provider setup
 
-Public Privacy Policy and Terms of Use for the Six Sigma mobile app.
+Public legal documents and provider setup resources for the mobile and Windows
+apps. You do not need collaborator access to read or download this repository.
+Visitors cannot push changes to it; a fork or pull request is a separate copy
+or proposed change, not permission to publish here.
+
+## Provider setup
+
+- [Supabase](provider_servers/supabase/README.md): app-supplied SQL + RLS;
+  no separate gateway deployment.
+- [Firebase](provider_servers/firebase/README.md): Cloud Function and rules.
+- [MySQL](provider_servers/mysql/README.md): HTTPS gateway and private database.
+- [Custom HTTPS](provider_servers/custom/README.md): implement the protocol.
+
+Start with the [provider setup guide](https://nealw1993.github.io/lean-six-sigma-legal/provider-setup.html).
 
 ## Publish with GitHub Pages
 
