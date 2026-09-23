@@ -5,6 +5,21 @@ sync for the app. They are not a managed service or a guarantee of production
 security. Keep a tested backup and validate authorization on a staging instance
 before storing real work.
 
+## Restricted-team release blocker (September 23, 2026)
+
+The snapshot implementations authorize vault/workspace membership, but do not
+independently enforce item-level read, edit, delete or access-grant permissions
+inside JSON payloads. App-side checks are not a security boundary against a
+modified client or an untrusted team member. Do not deploy these kits for
+sensitive records requiring isolation between members. Server-authoritative
+item permissions and adversarial integration coverage are still required.
+
+Personal-vault access, team membership and outstanding team invitations are
+separate grants. Use the app's coordinated paired-device revocation. Direct
+database-only personal-vault removal does not cancel all team access; review
+and revoke the relevant memberships and invitations separately when administering
+providers manually.
+
 ## Choose a provider
 
 - [Supabase](supabase/README.md): use the app's complete SQL + RLS script for

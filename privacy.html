@@ -27,7 +27,7 @@
       <aside class="legal-summary" aria-label="Document summary">
         <p class="eyebrow">LEGAL DOCUMENT</p>
         <h1>Privacy Policy</h1>
-        <p class="effective">Effective September 16, 2026</p>
+        <p class="effective">Effective September 23, 2026</p>
         <p>
           This policy explains how the Lean Six Sigma Toolbox mobile and Windows apps store,
           transmit, share, protect, and delete information.
@@ -105,7 +105,12 @@
             uses a server-side Admin Function with direct Firestore and Storage
             client access denied; MySQL and custom providers use their HTTPS
             gateway as the authorization boundary. The provider must limit
-            access according to memberships and item-level permissions. The database owner
+            access according to memberships. Current snapshot services do not
+            independently enforce individual record read, edit, delete, or
+            access-grant settings inside a member's payload. Those settings
+            are enforced by the App, not a secure boundary against a modified
+            client or an untrusted member. Do not use this version for sensitive
+            data requiring isolation between team members. The database owner
             controls the connected database, its geographic location,
             retention, logs, backups, and member access.
           </p>
@@ -157,6 +162,13 @@
             marker that propagates later. Revoking a paired device stops future
             authorized access after verification, but it cannot erase copies,
             exports, backups, or media already stored on that device.
+          </p>
+          <p>
+            Personal-vault membership and team-workspace membership are separate.
+            The App's paired-device revocation coordinates outstanding invitations
+            and associated team memberships before personal-vault removal. Revoking
+            only in a database console bypasses that workflow; administrators must
+            then review and revoke each relevant grant and unexpired invitation.
           </p>
           <p>
             The publisher-operated entitlement service stores only the

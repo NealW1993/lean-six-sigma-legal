@@ -27,7 +27,7 @@
       <aside class="legal-summary" aria-label="Page summary">
         <p class="eyebrow">DATABASE SETUP</p>
         <h1>Choose your sync provider</h1>
-        <p class="effective">Updated September 16, 2026</p>
+        <p class="effective">Updated September 23, 2026</p>
         <p>
           Personal and Team Workspaces can use Supabase, Firebase, the
           bundled MySQL gateway, or another compatible HTTPS service.
@@ -43,6 +43,23 @@
       </aside>
 
       <article class="legal-document">
+        <section id="security-status">
+          <h2>Restricted-team deployment is not ready</h2>
+          <p>
+            These reference kits enforce authenticated vault/workspace membership,
+            not per-item permissions inside synchronized JSON snapshots. The App's
+            read, edit, delete, and access-grant controls are not a server-enforced
+            security boundary against modified clients or untrusted members. Use
+            non-sensitive test data while server-side item authorization is being
+            completed. Do not deploy for restricted or regulated team records.
+          </p>
+          <p>
+            Use the App's coordinated paired-device revocation. Direct database-only
+            personal-vault removal does not cancel all team memberships or
+            outstanding invitations; review each separately. Passing connection
+            tests or membership checks does not establish item-level security.
+          </p>
+        </section>
         <section id="architecture">
           <h2><span>01</span> What goes in the app</h2>
           <p>
@@ -123,7 +140,8 @@
             MySQL does not provide PostgreSQL RLS. The gateway is therefore the
             mandatory authorization boundary: it binds writes to the verified
             device identity and checks active vault/workspace membership for
-            every read, write, invite, permission, and file operation.
+            each supported operation. This does not validate item-level permissions
+            inside a snapshot; see the deployment limitation above.
           </p>
           <p>
             Upgrading an existing installation does not rerun
