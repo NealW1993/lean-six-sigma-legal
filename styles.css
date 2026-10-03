@@ -59,8 +59,11 @@ h1 { font-size: 2.5rem; margin-bottom: 20px; }
 .legal-document section { padding: 28px 0; border-bottom: 1px solid var(--border); scroll-margin-top: 24px; }
 .legal-document section:first-child { padding-top: 0; }
 .legal-document section:last-child { border-bottom: 0; }
-.legal-document h2 { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; font-size: 1.45rem; margin-bottom: 20px; }
-.legal-document h2 span { padding-top: .25em; }
+/* A row, not a fixed two-column grid. A heading with no number span landed in
+   the 28px number column and broke one character per line; as a row the
+   heading text always takes the rest of the line, numbered or not. */
+.legal-document h2 { display: flex; align-items: flex-start; gap: 12px; font-size: 1.45rem; margin-bottom: 20px; overflow-wrap: anywhere; }
+.legal-document h2 span { flex: none; width: 28px; padding-top: .25em; }
 .legal-document p, .legal-document li { color: var(--muted); }
 .legal-document strong { color: var(--text); }
 .legal-document ul, .legal-document ol { padding-left: 24px; }
