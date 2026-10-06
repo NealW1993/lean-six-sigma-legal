@@ -24,8 +24,9 @@ vault/workspace membership, and provides short-lived attachment links.
 For a live staging security test, set `QC_BASE_URL`, `QC_CLIENT_KEY`, and
 `QC_SETUP_TOKEN` to the deployed gateway values and run
 `deno task test:integration`. The test creates disposable identities and scopes
-to verify cross-vault denial, workspace roles, one-time invites, refresh-token
-rotation, attachment digests, and file-link revocation.
+to verify cross-vault denial, workspace roles, one-time invites, per-item team
+permissions, invitation withdrawal, member removal, refresh-token rotation,
+attachment digests, and file-link revocation.
 
 Use a dedicated DB user limited to this database. Rotate `JWT_SECRET` only with
 a migration plan because it invalidates all device sessions. Rotating the client
@@ -38,6 +39,20 @@ An existing Docker volume does **not** rerun `schema.sql` when the image is
 rebuilt. Back up the database and file volume, compare the schema changes,
 apply the required changes in staging, and run the integration tests before
 upgrading production. Do not delete the volume to apply an upgrade.
+
+A database created from the copy of this kit published on or before
+September 16, 2026 needs `upgrade.sql` once, for team record protocol 2. After
+the backup, from this folder:
+
+```sh
+docker compose exec -T mysql sh -c 'exec mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"' < upgrade.sql
+docker compose up -d --build sync
+```
+
+A workspace that already holds team snapshots then answers
+`migration_required` until an administrator has reviewed that data. A
+reviewed migration procedure is not published yet; do not set
+`record_protocol` by hand or delete snapshots to get past the check.
 
 ## Pairing checklist
 

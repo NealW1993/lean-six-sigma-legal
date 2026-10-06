@@ -2,7 +2,9 @@
 
 This HTTPS Cloud Function implements Lean Six Sigma Sync Protocol v1. App
 clients authenticate through Firebase Anonymous Authentication; all Firestore
-and Storage access is denied to client SDKs and mediated by the function.
+and Storage access is denied to client SDKs and mediated by the function. It
+checks every team item's permissions on the server with the module in
+`../shared`, so keep that folder beside this kit: the build includes it.
 
 ## Deploy
 
@@ -11,7 +13,8 @@ and Storage access is denied to client SDKs and mediated by the function.
 2. Create Firestore and Cloud Storage in the Firebase console.
 3. Install Node.js 22 and Firebase CLI, then run `firebase login`.
 4. Copy `.firebaserc.example` to `.firebaserc` and replace the project id.
-5. From `functions`, run `npm install` and `npm run check`.
+5. From `functions`, run `npm install` and `npm run check`. Deploying builds
+   the function first.
 6. Use the Firebase **Web API key** from Project settings > General for
    `SIX_SIGMA_CLIENT_KEY`. Generate a separate random value of at least 32 bytes
    for `SIX_SIGMA_SETUP_TOKEN`. Enter each value at its CLI prompt, then deploy
@@ -51,3 +54,7 @@ the Flutter build. Cloud Functions obtains its service identity from Firebase.
 For an existing deployment, back up Firestore and Storage before upgrading.
 Deploy the function and both rule sets together, then repeat these checks in
 staging. `npm run check` checks types; it does not prove deployed authorization.
+A workspace that already holds team snapshots answers `migration_required`
+until an administrator has reviewed that data. A reviewed migration procedure
+is not published yet; do not set `record_protocol` by hand or delete snapshots
+to get past the check.

@@ -27,7 +27,7 @@
       <aside class="legal-summary" aria-label="Document summary">
         <p class="eyebrow">LEGAL DOCUMENT</p>
         <h1>Privacy Policy</h1>
-        <p class="effective">Effective September 23, 2026</p>
+        <p class="effective">Effective October 6, 2026</p>
         <p>
           This policy explains how the Lean Six Sigma Toolbox mobile and Windows apps store,
           transmit, share, protect, and delete information.
@@ -105,12 +105,11 @@
             uses a server-side Admin Function with direct Firestore and Storage
             client access denied; MySQL and custom providers use their HTTPS
             gateway as the authorization boundary. The provider must limit
-            access according to memberships. Current snapshot services do not
-            independently enforce individual record read, edit, delete, or
-            access-grant settings inside a member's payload. Those settings
-            are enforced by the App, not a secure boundary against a modified
-            client or an untrusted member. Do not use this version for sensitive
-            data requiring isolation between team members. The database owner
+            access according to memberships. For team workspaces it also checks
+            each record's read, edit, delete, and access-grant settings for every
+            member before returning or changing that record. These settings
+            cannot recall copies a member has already viewed, downloaded,
+            exported, or backed up. The database owner
             controls the connected database, its geographic location,
             retention, logs, backups, and member access.
           </p>
@@ -159,7 +158,10 @@
             Synchronization may combine records created on different devices.
             For competing edits to the same record, the App generally keeps the
             newest recognized edit; deletions may be represented by a deletion
-            marker that propagates later. Revoking a paired device stops future
+            marker that propagates later. In a team workspace, the team database
+            keeps the competing edit that reaches it first; the other remains
+            on the device that made it, under Sync conflicts, until it is
+            restored or discarded. Revoking a paired device stops future
             authorized access after verification, but it cannot erase copies,
             exports, backups, or media already stored on that device.
           </p>
@@ -302,7 +304,10 @@
           </p>
           <p>
             Synced edits and deletions may propagate to other authorized
-            devices, but propagation requires a working connection. Cloud copies
+            devices, but propagation requires a working connection. Deleting a
+            team-workspace project also deletes, for every member, the items that
+            belong only to that project; the App asks for confirmation first,
+            and an item can be kept by moving it to another project. Cloud copies
             are controlled by the owner of the database you connected. Removing
             a connection or revoking a member or paired device does not
             automatically delete copies already downloaded, exported, or backed

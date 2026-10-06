@@ -5,14 +5,24 @@ sync for the app. They are not a managed service or a guarantee of production
 security. Keep a tested backup and validate authorization on a staging instance
 before storing real work.
 
-## Restricted-team release blocker (September 23, 2026)
+## Team permissions (October 6, 2026)
 
-The snapshot implementations authorize vault/workspace membership, but do not
-independently enforce item-level read, edit, delete or access-grant permissions
-inside JSON payloads. App-side checks are not a security boundary against a
-modified client or an untrusted team member. Do not deploy these kits for
-sensitive records requiring isolation between members. Server-authoritative
-item permissions and adversarial integration coverage are still required.
+Team workspaces use team record protocol 2: each team item is stored on its
+own, and the server checks its read, edit, delete and access-grant permissions
+for every member before returning or changing it. Supabase does this in
+database functions behind row-level security; the Firebase function and the
+MySQL gateway share [`shared/item_authorization.ts`](shared/item_authorization.ts).
+App versions that still send whole-workspace snapshots are refused with
+"upgrade required" until they are updated.
+
+A workspace that already holds team snapshots from an earlier version stops
+syncing ("migration required") until an administrator reviews that data. A
+reviewed migration procedure is not published yet: do not mark a workspace
+migrated by hand or delete its snapshots to get past the check.
+
+Test with two unrelated member identities before trusting a deployment with
+restricted records. Permissions cannot recall copies a member has already
+downloaded, exported or backed up.
 
 Personal-vault access, team membership and outstanding team invitations are
 separate grants. Use the app's coordinated paired-device revocation. Direct
@@ -44,7 +54,9 @@ placeholders. Generate your own values; never publish populated `.env`,
    the separate setup token when required. Test the connection.
 3. Pair two test devices and verify an edit in both directions.
 4. Test non-member denial, role restrictions, one-time invite redemption,
-   refresh-token rotation, and revoked-device access.
+   refresh-token rotation, and revoked-device access. As a member, confirm you
+   cannot open, change or delete a team item you were not granted, and that
+   removing a member stops their next sync.
 5. Test an upgrade and restore independently of production. Revocation cannot
    retrieve files already downloaded or instantly cancel every signed URL.
 

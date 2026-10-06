@@ -19,8 +19,17 @@ A conforming provider must:
    tested restore procedures.
 9. Never expose database credentials, private signing keys, administrative
    tokens, or other users' refresh tokens to the app.
+10. Store and authorize team items one by one, as the protocol's
+    [Team records](../../provider_protocol/README.md#team-records) section
+    describes: check each item's permissions on the server, apply a push
+    all-or-nothing, refuse a stale `baseRevision` with 409, and answer the
+    legacy snapshot operations with 426.
+11. Let only the owner remove a member, never the owner, and treat removing
+    someone already removed as success. Let the owner or a member allowed to
+    invite withdraw an invitation nobody has redeemed.
 
-Use the MySQL server as executable reference behavior even when the underlying
+Use the MySQL server and `../shared/item_authorization.ts` as executable
+reference behavior even when the underlying
 database is PostgreSQL, SQL Server, SQLite, DynamoDB, MongoDB, or another host.
 The app's **Test connection** action validates the protocol envelope and device
 authentication but does not replace server-side penetration testing.

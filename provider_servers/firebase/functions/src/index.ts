@@ -5,6 +5,7 @@ import {getStorage} from "firebase-admin/storage";
 import {defineSecret} from "firebase-functions/params";
 import {onRequest} from "firebase-functions/v2/https";
 import {timingSafeEqual} from "node:crypto";
+import {Actor, TeamRecord, AuthorizationError, applyChanges, projectRecords, authorizeFile} from "../../../shared/item_authorization";
 
 initializeApp();
 
@@ -105,7 +106,7 @@ function workspaceMemberJson(row: Json): Json {
   };
 }
 
-async function authorizeAttachment(db: Firestore, uid: string, data: Json): Promise<string> {
+async function authorizeAttachment(db: Firestore, uid: string, data: Json, action: "read" | "write" | "delete"): Promise<string> {
   const scope = required(data, "scope", 20);
   const scopeId = required(data, "scope_id", 100);
   const id = required(data, "id", 100);
@@ -115,8 +116,46 @@ async function authorizeAttachment(db: Firestore, uid: string, data: Json): Prom
     throw new ApiError(400, "invalid_path", "The attachment path is invalid.");
   }
   if (scope === "personal") await personalMember(db, uid, scopeId);
-  else await workspaceMember(db, uid, scopeId);
+  else {
+    const record = await teamRecords(db, uid, scopeId, undefined, path, action);
+    if (action === "write") {
+      const manifest = record as TeamRecord;
+      if (manifest.body.sha256 !== data.sha256 || manifest.body.sizeBytes !== data.size_bytes || manifest.body.mimeType !== data.mime_type) {
+        throw new ApiError(400, "manifest_mismatch", "Use the saved attachment manifest.");
+      }
+    }
+  }
   return path;
+}
+
+async function teamRecords(db: Firestore, uid: string, workspaceId: string,
+  changes?: unknown, path?: string, action: "read" | "write" | "delete" = "read"): Promise<unknown> {
+  return db.runTransaction(async tx => {
+    const workspaceRef = db.collection("workspaces").doc(workspaceId);
+    const workspace = await tx.get(workspaceRef);
+    const member = await tx.get(workspaceRef.collection("members").doc(uid));
+    if (!workspace.exists || !member.exists || member.get("active") === false) {
+      throw new ApiError(403, "not_a_workspace_member", "Workspace membership required.");
+    }
+    if (workspace.get("record_protocol") !== 2) {
+      const legacy = await tx.get(workspaceRef.collection("snapshots").limit(1));
+      if (!legacy.empty) throw new ApiError(409, "migration_required", "Administrator review of legacy team data is required.");
+    }
+    const actor: Actor = {uid, principal: member.get("principal_id") || uid,
+      owner: member.get("role") === "owner", canEdit: member.get("can_edit") !== false,
+      canDelete: member.get("can_delete") === true, name: member.get("display_name") || "Member"};
+    const rows = await tx.get(workspaceRef.collection("records_v2"));
+    const records = new Map(rows.docs.map(doc => [doc.id, doc.data() as unknown as TeamRecord]));
+    if (path) return authorizeFile(records, actor, path, action);
+    const updated = changes === undefined ? records : applyChanges(records, changes, actor, workspaceId,
+      String(workspace.get("name")), new Date().toISOString());
+    if (changes !== undefined) {
+      for (const [id, record] of updated) {
+        if (record !== records.get(id)) tx.set(workspaceRef.collection("records_v2").doc(id), record);
+      }
+    }
+    return projectRecords(updated, actor, workspaceId, String(workspace.get("name")));
+  });
 }
 
 async function execute(db: Firestore, operation: string, data: Json, uid: string): Promise<unknown> {
@@ -343,7 +382,9 @@ async function execute(db: Firestore, operation: string, data: Json, uid: string
       if (member.role !== "owner" && member.can_invite !== true) throw new ApiError(403, "invite_forbidden", "Invitation permission required.");
       const hash = required(data, "invite_hash", 64);
       if (!/^[0-9a-f]{64}$/i.test(hash)) throw new ApiError(400, "invalid_hash", "Invalid invitation hash.");
-      await db.collection("workspace_invites").doc(hash).set({workspace_id: workspaceId, created_by: uid, expires_at: Timestamp.fromDate(new Date(required(data, "expires_at", 80))), consumed_at: null, created_at: now});
+      await db.collection("workspace_invites").doc(hash).set({workspace_id: workspaceId, created_by: uid,
+        delegated_principal: data.share_identity === true ? (member.principal_id || uid) : null,
+        expires_at: Timestamp.fromDate(new Date(required(data, "expires_at", 80))), consumed_at: null, created_at: now});
       return {created: true};
     }
     case "redeem_workspace_invite": {
@@ -354,7 +395,11 @@ async function execute(db: Firestore, operation: string, data: Json, uid: string
         const inviteRef = db.collection("workspace_invites").doc(hash);
         const invite = await tx.get(inviteRef);
         if (!invite.exists || invite.get("workspace_id") !== workspaceId || invite.get("consumed_at") || invite.get("expires_at").toMillis() <= Date.now()) throw new ApiError(409, "invite_invalid", "The invitation is invalid, expired, or already used.");
-        tx.set(db.collection("workspaces").doc(workspaceId).collection("members").doc(uid), {user_id: uid, role: "member", can_invite: false, display_name: "Member", active: true, joined_at: now});
+        const memberRef = db.collection("workspaces").doc(workspaceId).collection("members").doc(uid);
+        const previous = await tx.get(memberRef);
+        if (!previous.exists || previous.get("active") === false) tx.set(memberRef, {user_id: uid, role: "member",
+          principal_id: invite.get("delegated_principal") || uid,
+          can_invite: false, display_name: "Member", active: true, joined_at: now});
         tx.update(inviteRef, {consumed_at: now, consumed_by: uid});
       });
       return {role: "member", can_invite: false};
@@ -377,31 +422,56 @@ async function execute(db: Firestore, operation: string, data: Json, uid: string
       await targetRef.update({can_invite: data.can_invite === true});
       return {updated: true};
     }
-    case "push_shared_snapshot": {
+    case "cancel_workspace_invite": {
       const workspaceId = required(data, "workspace_id", 100);
-      await workspaceMember(db, uid, workspaceId);
-      const payload = object(data.payload);
-      if (Buffer.byteLength(JSON.stringify(payload)) > maxPayloadBytes) throw new ApiError(413, "payload_too_large", "Snapshot is too large.");
-      await db.collection("workspaces").doc(workspaceId).collection("snapshots").doc(uid).set({user_id: uid, payload, updated_at: now});
-      return {saved: true};
+      const member = await workspaceMember(db, uid, workspaceId);
+      if (member.role !== "owner" && member.can_invite !== true) throw new ApiError(403, "invite_forbidden", "Invitation permission required.");
+      const inviteRef = db.collection("workspace_invites").doc(required(data, "invite_hash", 64));
+      // Only an invitation of this workspace that nobody has redeemed; anything
+      // else is already the state the caller asked for.
+      await db.runTransaction(async (tx) => {
+        const invite = await tx.get(inviteRef);
+        if (invite.exists && invite.get("workspace_id") === workspaceId && !invite.get("consumed_at")) tx.delete(inviteRef);
+      });
+      return {cancelled: true};
+    }
+    case "remove_workspace_member": {
+      const workspaceId = required(data, "workspace_id", 100);
+      const member = await workspaceMember(db, uid, workspaceId);
+      if (member.role !== "owner") throw new ApiError(403, "owner_required", "Only the owner can remove members.");
+      const target = required(data, "member_user_id", 200);
+      if (target === uid) throw new ApiError(400, "owner_self_removal", "The workspace owner cannot remove themselves.");
+      const targetRef = db.collection("workspaces").doc(workspaceId).collection("members").doc(target);
+      const targetRow = await targetRef.get();
+      if (targetRow.exists && targetRow.get("role") !== "member") throw new ApiError(400, "invalid_member", "Only members can be removed from a workspace.");
+      // Idempotent once authorised: removing someone already gone is the state
+      // the caller asked for. Refusing would strand a revoke whose first reply
+      // was lost, and the paired device could never be withdrawn.
+      if (targetRow.exists && targetRow.get("active") !== false) await targetRef.update({active: false, revoked_at: now});
+      return {removed: true};
+    }
+    case "push_shared_snapshot": {
+      throw new ApiError(426, "upgrade_required", "Upgrade the app to item authorization protocol 2.");
     }
     case "pull_shared_snapshots": {
-      const workspaceId = required(data, "workspace_id", 100);
-      await workspaceMember(db, uid, workspaceId);
-      const rows = await db.collection("workspaces").doc(workspaceId).collection("snapshots").get();
-      return rows.docs.map((doc) => ({user_id: doc.get("user_id"), payload: doc.get("payload")}));
+      throw new ApiError(426, "upgrade_required", "Upgrade the app to item authorization protocol 2.");
     }
+    case "push_shared_records":
+      if (Buffer.byteLength(JSON.stringify(data.changes)) > maxPayloadBytes) throw new ApiError(413, "payload_too_large", "Changes are too large.");
+      return teamRecords(db, uid, required(data, "workspace_id", 100), data.changes ?? null);
+    case "pull_shared_records":
+      return teamRecords(db, uid, required(data, "workspace_id", 100));
     case "attachment_upload_url":
     case "attachment_download_url": {
-      const path = await authorizeAttachment(db, uid, data);
       const action = operation === "attachment_upload_url" ? "write" : "read";
+      const path = await authorizeAttachment(db, uid, data, action);
       const options: {version: "v4"; action: "write" | "read"; expires: number; contentType?: string} = {version: "v4", action, expires: Date.now() + signedUrlLifetimeMs};
       if (action === "write") options.contentType = required(data, "mime_type", 200);
       const [url] = await getStorage().bucket().file(path).getSignedUrl(options);
       return {url, method: action === "write" ? "PUT" : "GET", headers: action === "write" ? {"Content-Type": options.contentType} : {}};
     }
     case "attachment_delete": {
-      const path = await authorizeAttachment(db, uid, data);
+      const path = await authorizeAttachment(db, uid, data, "delete");
       await getStorage().bucket().file(path).delete({ignoreNotFound: true});
       return {deleted: true};
     }
@@ -428,7 +498,7 @@ export const sixSigmaApi = onRequest(
       const result = await execute(getFirestore(), operation, object(body.data), uid);
       res.status(200).json({ok: true, data: result});
     } catch (error) {
-      const known = error instanceof ApiError ? error : new ApiError(500, "server_error", "The provider could not complete the request.");
+      const known = error instanceof ApiError || error instanceof AuthorizationError ? error : new ApiError(500, "server_error", "The provider could not complete the request.");
       console.error({event: "sync_request_failed", code: known.code, status: known.status});
       res.status(known.status).json({ok: false, code: known.code, error: known.message});
     }

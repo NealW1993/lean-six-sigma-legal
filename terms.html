@@ -27,7 +27,7 @@
       <aside class="legal-summary" aria-label="Document summary">
         <p class="eyebrow">LEGAL DOCUMENT</p>
         <h1>Terms of Use</h1>
-        <p class="effective">Effective September 23, 2026</p>
+        <p class="effective">Effective October 6, 2026</p>
         <p>
           These terms govern your use of the Lean Six Sigma Toolbox mobile and Windows apps
           and their Free, Pro, team-workspace, and paired-device features.
@@ -113,11 +113,9 @@
             You retain responsibility for content you create or import. You
             represent that you have the rights and permissions necessary to use
             that content. The App applies workspace and item permissions in its
-            interface and local mutation paths. Current snapshot services enforce
-            membership, but do not independently validate per-item read, edit,
-            delete, or access-grant permissions within member payloads. These
-            controls must not be relied on to isolate sensitive records from an
-            untrusted team member or modified client. Owners and authorized inviters are
+            interface, and the team database also checks each record's read,
+            edit, delete, and access-grant permissions on the server. Owners and
+            authorized inviters are
             responsible for whom they admit. Removing a member or changing a
             permission cannot retrieve copies that a member previously viewed,
             downloaded, exported, printed, or backed up. Do not treat App
@@ -125,10 +123,20 @@
             approval, or audit policies.
           </p>
           <p>
+            When two people change the same team item before it syncs, the team
+            database keeps the change that reaches it first; the App keeps the
+            other on that person's device, under Sync conflicts, to restore or
+            discard. Deleting a team project also deletes, for every member, the
+            items that belong only to that project, after the App asks you to
+            confirm. You are responsible for reviewing conflicts and deletions
+            before relying on team records.
+          </p>
+          <p>
             Personal device access, team membership, and unexpired team invitations
             are separate grants. Use the App's coordinated paired-device revocation;
             direct database-only personal-vault removal does not cancel all team
-            access. Restricted-team deployment must wait for server-side item authorization.
+            access. A workspace holding team data from an earlier, snapshot-based
+            version stops syncing until an administrator reviews that data.
           </p>
         </section>
 

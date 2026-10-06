@@ -5,8 +5,9 @@ apps. You do not need collaborator access to read or download this repository.
 Visitors cannot push changes to it; a fork or pull request is a separate copy
 or proposed change, not permission to publish here.
 
-**Release candidate status:** restricted-team production use is blocked pending
-server-side item authorization. See [release status](RELEASE_STATUS.md) and
+**Release candidate status:** team workspaces check every item's permissions on
+the server. Workspaces holding team data from earlier snapshot-based versions
+wait for a reviewed migration. See [release status](RELEASE_STATUS.md) and
 [September 23 UI previews](release-preview/2026-09-23/README.md).
 
 ## Provider setup

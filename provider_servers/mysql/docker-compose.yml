@@ -18,7 +18,9 @@ services:
       - attachment_data:/data/files
     networks: [private]
   sync:
-    build: .
+    build:
+      context: ..
+      dockerfile: mysql/Dockerfile
     restart: unless-stopped
     env_file: .env
     depends_on:

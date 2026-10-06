@@ -149,7 +149,7 @@ Deno.test({
       display_name: "Owner",
     }, refreshed);
     await api(
-      "pull_shared_snapshots",
+      "pull_shared_records",
       { workspace_id: workspaceId },
       member,
       403,
@@ -175,16 +175,126 @@ Deno.test({
       outsider,
       409,
     );
-    await api("push_shared_snapshot", {
+    await api("push_shared_records", {
       workspace_id: workspaceId,
-      payload: { notes: [{ id: "team-note", body: "authorized team data" }] },
+      changes: [
+        {
+          id: "team-project",
+          kind: "projects",
+          baseRevision: 0,
+          body: { id: "team-project", name: "Line 3" },
+        },
+        {
+          id: "team-note",
+          kind: "notes",
+          baseRevision: 0,
+          body: {
+            id: "team-note",
+            body: "authorized team data",
+            projectIds: ["team-project"],
+          },
+        },
+      ],
     }, member);
-    const sharedPull = await api("pull_shared_snapshots", {
+    const sharedPull = await api("pull_shared_records", {
       workspace_id: workspaceId,
     }, refreshed);
     check(
-      JSON.stringify(sharedPull).includes("team-note"),
+      JSON.stringify(sharedPull).includes("authorized team data"),
       "owner could not read member work",
+    );
+
+    // A link a note already carries survives an edit by a member who can no
+    // longer open the linked item; a new link to it is still refused.
+    const revisionOf = (result: Json, id: string): number => {
+      const records = (result.data as Json).records as Json[];
+      return Number(records.find((record) => record.id === id)?.revision ?? 0);
+    };
+    const reference = (access: Json) => ({
+      id: "shared-ref",
+      kind: "notes",
+      body: {
+        id: "shared-ref",
+        title: "Baseline capability",
+        projectIds: ["team-project"],
+        access,
+      },
+    });
+    const link = [{ id: "shared-ref", kind: "note", title: "Baseline" }];
+    const opened = await api("push_shared_records", {
+      workspace_id: workspaceId,
+      changes: [{
+        ...reference({ read: true, write: false, delete: false }),
+        baseRevision: 0,
+      }],
+    }, refreshed);
+    check(
+      (opened.data as Json).carriedLinks === true,
+      "team records do not advertise carried links",
+    );
+    const linked = await api("push_shared_records", {
+      workspace_id: workspaceId,
+      changes: [{
+        id: "member-linker",
+        kind: "notes",
+        baseRevision: 0,
+        body: {
+          id: "member-linker",
+          body: "v1",
+          projectIds: ["team-project"],
+          linkedItems: link,
+        },
+      }],
+    }, member);
+    await api("push_shared_records", {
+      workspace_id: workspaceId,
+      changes: [{
+        ...reference({ read: false, write: false, delete: false }),
+        baseRevision: revisionOf(opened, "shared-ref"),
+      }],
+    }, refreshed);
+    const kept = await api("push_shared_records", {
+      workspace_id: workspaceId,
+      changes: [{
+        id: "member-linker",
+        kind: "notes",
+        baseRevision: revisionOf(linked, "member-linker"),
+        body: {
+          id: "member-linker",
+          body: "member edit",
+          projectIds: ["team-project"],
+          linkedItems: link,
+        },
+      }],
+    }, member);
+    const keptRecords = (kept.data as Json).records as Json[];
+    check(
+      !keptRecords.some((record) => record.id === "shared-ref"),
+      "a member could read a private note",
+    );
+    check(
+      JSON.stringify(
+        keptRecords.find((record) => record.id === "member-linker")?.body,
+      ).includes('"shared-ref"'),
+      "a member's edit stripped a carried link",
+    );
+    await api(
+      "push_shared_records",
+      {
+        workspace_id: workspaceId,
+        changes: [{
+          id: "member-new-link",
+          kind: "notes",
+          baseRevision: 0,
+          body: {
+            id: "member-new-link",
+            projectIds: ["team-project"],
+            linkedItems: link,
+          },
+        }],
+      },
+      member,
+      403,
     );
     await api(
       "create_workspace_invite",
@@ -210,6 +320,47 @@ Deno.test({
       ),
       expires_at: expiresAt,
     }, member);
+
+    // An invitation can be withdrawn until somebody redeems it.
+    const withdrawn = await digest(
+      new TextEncoder().encode(`withdrawn-${crypto.randomUUID()}`),
+    );
+    await api("create_workspace_invite", {
+      workspace_id: workspaceId,
+      invite_hash: withdrawn,
+      expires_at: expiresAt,
+    }, refreshed);
+    await api("cancel_workspace_invite", {
+      workspace_id: workspaceId,
+      invite_hash: withdrawn,
+    }, refreshed);
+    await api(
+      "redeem_workspace_invite",
+      { workspace_id: workspaceId, invite_hash: withdrawn },
+      outsider,
+      409,
+    );
+
+    // A removed member loses the team at once. Removing them again is the
+    // state already asked for, and the owner cannot remove themselves.
+    const removal = {
+      workspace_id: workspaceId,
+      member_user_id: member.user_id,
+    };
+    await api("remove_workspace_member", removal, refreshed);
+    await api(
+      "pull_shared_records",
+      { workspace_id: workspaceId },
+      member,
+      403,
+    );
+    await api("remove_workspace_member", removal, refreshed);
+    await api(
+      "remove_workspace_member",
+      { workspace_id: workspaceId, member_user_id: refreshed.user_id },
+      refreshed,
+      400,
+    );
 
     const bytes = new TextEncoder().encode("cross-device evidence");
     const sha256 = await digest(bytes);

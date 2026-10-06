@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Lean Six Sigma Sync Provider
-  version: 1.0.0
+  version: 1.1.0
   description: Provider-neutral synchronization gateway used by Lean Six Sigma Toolbox.
 servers:
   - url: https://sync.example.com
@@ -31,7 +31,8 @@ paths:
         '400': {description: Invalid request or unsupported protocol version.}
         '401': {description: Missing or invalid device identity.}
         '403': {description: Authenticated but not authorized for the vault/workspace.}
-        '409': {description: Invite consumed, owner conflict, or duplicate membership.}
+        '409': {description: "Invite consumed, owner conflict, duplicate membership, or a team record changed since its baseRevision."}
+        '426': {description: "Legacy shared snapshot operation (push_shared_snapshot or pull_shared_snapshots). Team data uses push_shared_records and pull_shared_records."}
 components:
   securitySchemes:
     clientKey:
@@ -80,8 +81,10 @@ components:
             - set_workspace_display_name
             - list_workspace_members
             - set_member_invite_permission
-            - push_shared_snapshot
-            - pull_shared_snapshots
+            - cancel_workspace_invite
+            - remove_workspace_member
+            - push_shared_records
+            - pull_shared_records
             - attachment_upload_url
             - attachment_download_url
             - attachment_delete

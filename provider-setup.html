@@ -44,20 +44,28 @@
 
       <article class="legal-document">
         <section id="security-status">
-          <h2>Restricted-team deployment is not ready</h2>
+          <h2>Team permissions are checked on the server</h2>
           <p>
-            These reference kits enforce authenticated vault/workspace membership,
-            not per-item permissions inside synchronized JSON snapshots. The App's
-            read, edit, delete, and access-grant controls are not a server-enforced
-            security boundary against modified clients or untrusted members. Use
-            non-sensitive test data while server-side item authorization is being
-            completed. Do not deploy for restricted or regulated team records.
+            Team workspaces store each item on its own. The provider checks every
+            item's read, edit, delete, and access-grant permissions for each member
+            before returning or changing it: Supabase in database functions behind
+            row-level security, Firebase in its Admin Function, and MySQL in its
+            gateway. An App version that still sends whole-workspace snapshots is
+            refused until it is updated.
+          </p>
+          <p>
+            A workspace that already holds team snapshots from an earlier version
+            stops syncing until an administrator reviews that data. A reviewed
+            migration procedure is not published yet; do not mark a workspace
+            migrated by hand or delete its snapshots to bypass the check. Test with
+            two unrelated member identities before trusting a deployment with
+            restricted records.
           </p>
           <p>
             Use the App's coordinated paired-device revocation. Direct database-only
             personal-vault removal does not cancel all team memberships or
-            outstanding invitations; review each separately. Passing connection
-            tests or membership checks does not establish item-level security.
+            outstanding invitations; review each separately. A passing connection
+            test does not prove item permissions; check them with the list below.
           </p>
         </section>
         <section id="architecture">
@@ -92,6 +100,12 @@
             first-time setup. Revoke it after setup. RLS is the data boundary;
             the publishable key alone does not grant row access.
           </p>
+          <p>
+            After updating the App, copy its complete SQL + RLS script again and
+            run it so the team database receives server-side fixes. The script
+            replaces functions and policies in place and keeps existing records.
+            Back up the project first and try the script on a staging project.
+          </p>
           <p><a href="https://supabase.com/dashboard/projects">Open Supabase projects</a> &middot; <a href="https://supabase.com/docs/guides/database/postgres/row-level-security">RLS documentation</a></p>
         </section>
 
@@ -114,7 +128,8 @@
           <p>
             Set <code>SIX_SIGMA_CLIENT_KEY</code> to the Web API key entered in
             the app. Authorization still requires a verified Firebase ID token
-            plus server-side vault/workspace membership. Attachments use
+            plus server-side vault/workspace membership, and each team item's
+            own permissions. Attachments use
             object- and method-scoped signed URLs that expire after five
             minutes. An already issued URL remains usable until it expires,
             even if the device is revoked during that interval.
@@ -140,15 +155,17 @@
             MySQL does not provide PostgreSQL RLS. The gateway is therefore the
             mandatory authorization boundary: it binds writes to the verified
             device identity and checks active vault/workspace membership for
-            each supported operation. This does not validate item-level permissions
-            inside a snapshot; see the deployment limitation above.
+            each supported operation, and each team item's read, edit, delete,
+            and access-grant permissions.
           </p>
           <p>
             Upgrading an existing installation does not rerun
             <code>schema.sql</code> automatically: database initialization applies
             only to a new volume. Back up the database and attachments, review
             schema changes, and test an upgrade and restore on a separate instance.
-            Do not delete a production volume to force setup.
+            Do not delete a production volume to force setup. A database created
+            from the September 16, 2026 kit also needs the kit's
+            <code>upgrade.sql</code> once; its README gives the command.
           </p>
           <p><a href="https://docs.docker.com/get-started/get-docker/">Install Docker</a> &middot; <a href="https://dev.mysql.com/doc/refman/8.4/en/security.html">MySQL security guidance</a></p>
         </section>
@@ -166,6 +183,8 @@
             <li>Issue independent device identities and rotating refresh tokens; store refresh and invitation token hashes only.</li>
             <li>Atomically consume invitations and enforce owner/member/inviter roles.</li>
             <li>Ignore a conflicting client <code>user_id</code> and bind writes to the authenticated identity.</li>
+            <li>Store and authorize team items one by one: check each item's permissions on the server, apply each push all-or-nothing, and refuse a change based on a stale revision.</li>
+            <li>Let only the owner remove a member, never the owner, and treat removing someone already removed as success. Let the owner or a member allowed to invite withdraw an invitation nobody has redeemed.</li>
             <li>Return attachment URLs scoped to one object and HTTP method with an expiration no longer than 15 minutes.</li>
             <li>Never return database credentials, signing keys, admin tokens, refresh hashes, or another device's token.</li>
           </ul>
@@ -184,6 +203,7 @@
             <li>Complete setup and Test connection before generating an invite. Pair a second device, make one edit, sync, and confirm it arrives on the first.</li>
             <li>Revoke that test device and confirm new authorized requests fail. Already downloaded files and unexpired signed URLs are not erased by revocation.</li>
             <li>Confirm a non-member receives HTTP 403 for every vault/workspace operation.</li>
+            <li>As a member, confirm you cannot open, change, or delete a team item you were not granted, and that removing a member stops their next sync.</li>
             <li>Confirm copied public keys cannot read data without a valid identity.</li>
             <li>Confirm consumed invitations and rotated refresh tokens cannot be reused.</li>
             <li>Confirm logs redact Authorization, client keys, setup tokens, invitation values, and URL query tokens.</li>

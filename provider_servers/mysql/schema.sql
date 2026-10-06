@@ -96,6 +96,7 @@ CREATE TABLE IF NOT EXISTS workspaces (
   id VARCHAR(100) PRIMARY KEY,
   name VARCHAR(200) NOT NULL,
   owner_user_id CHAR(36) NOT NULL,
+  record_protocol INT NOT NULL DEFAULT 1,
   created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   CONSTRAINT fk_workspace_owner FOREIGN KEY (owner_user_id)
     REFERENCES sync_users(id) ON DELETE RESTRICT
@@ -105,6 +106,9 @@ CREATE TABLE IF NOT EXISTS workspace_members (
   workspace_id VARCHAR(100) NOT NULL,
   user_id CHAR(36) NOT NULL,
   role ENUM('owner','member') NOT NULL,
+  principal_id CHAR(36) NULL,
+  can_edit BOOLEAN NOT NULL DEFAULT TRUE,
+  can_delete BOOLEAN NOT NULL DEFAULT FALSE,
   can_invite BOOLEAN NOT NULL DEFAULT FALSE,
   display_name VARCHAR(120) NOT NULL,
   active BOOLEAN NOT NULL DEFAULT TRUE,
@@ -122,6 +126,7 @@ CREATE TABLE IF NOT EXISTS workspace_invites (
   invite_hash CHAR(64) PRIMARY KEY,
   workspace_id VARCHAR(100) NOT NULL,
   created_by CHAR(36) NOT NULL,
+  delegated_principal CHAR(36) NULL,
   expires_at DATETIME(6) NOT NULL,
   consumed_at DATETIME(6) NULL,
   consumed_by CHAR(36) NULL,
@@ -144,6 +149,15 @@ CREATE TABLE IF NOT EXISTS shared_snapshots (
     REFERENCES workspaces(id) ON DELETE CASCADE,
   CONSTRAINT fk_shared_snapshot_user FOREIGN KEY (user_id)
     REFERENCES sync_users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Team record protocol 2: one row per team item, authorized in main.ts.
+CREATE TABLE IF NOT EXISTS team_records (
+  workspace_id VARCHAR(100) NOT NULL,
+  id VARCHAR(128) NOT NULL,
+  record_json JSON NOT NULL,
+  PRIMARY KEY(workspace_id,id),
+  FOREIGN KEY(workspace_id) REFERENCES workspaces(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- MySQL has no PostgreSQL-style RLS. All tables are private to the gateway DB
