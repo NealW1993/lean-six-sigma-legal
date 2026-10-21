@@ -81,8 +81,8 @@ function normalized(body: Json, old: TeamRecord | undefined, kind: RecordKind,
   if (kind === "projects" || kind === "topics" || kind === "topicComments") result.groupName = name;
   if (kind === "topics" || kind === "topicComments") {
     result.authorName = old?.body.authorName ?? actor.name;
-    if (!actor.owner && result.pinned === true && old?.body.pinned !== true) {
-      fail("owner_required", "Only the workspace owner can pin a topic.");
+    if (!actor.owner && (result.pinned === true) !== (old?.body.pinned === true)) {
+      fail("owner_required", "Only the workspace owner can pin or unpin a topic.");
     }
   }
   if (kind === "syncedAttachments") {
@@ -136,8 +136,12 @@ export function applyChanges(current: ReadonlyMap<string, TeamRecord>, input: un
     if (old?.deleted && !controls(actor, old)) fail("restore_forbidden", "Only the creator or owner can restore this item.");
     const body = normalized(asObject(change.body), old, kind, actor, workspace, name, now);
     if (body.id !== id) fail("identity_mismatch", "Record ID does not match.", 400);
-    if (old && !controls(actor, old) && JSON.stringify(access(old)) !== JSON.stringify(body.access ?? access(old))) {
-      fail("grant_forbidden", "Only the creator or owner can change item permissions.");
+    if (old && !controls(actor, old)) {
+      const previousAccess = access(old);
+      const nextAccess = asObject(body.access ?? previousAccess);
+      if (["read", "write", "delete"].some(key => previousAccess[key] !== nextAccess[key])) {
+        fail("grant_forbidden", "Only the creator or owner can change item permissions.");
+      }
     }
     result.set(id, {id, kind, owner: old?.owner ?? actor.principal, editor: actor.principal,
       revision: (old?.revision ?? 0) + 1, deleted: false, body, updatedAt: now});

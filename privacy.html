@@ -27,7 +27,7 @@
       <aside class="legal-summary" aria-label="Document summary">
         <p class="eyebrow">LEGAL DOCUMENT</p>
         <h1>Privacy Policy</h1>
-        <p class="effective">Effective October 6, 2026</p>
+        <p class="effective">Effective October 21, 2026</p>
         <p>
           This policy explains how the Lean Six Sigma Toolbox mobile and Windows apps store,
           transmit, share, protect, and delete information.
@@ -75,6 +75,7 @@
             API keys, database credentials, workspace passphrase verifiers,
             pairing credentials, and provider authentication refresh tokens are
             stored separately using Android secure storage, Apple Keychain, or
+            encrypted Windows storage with its encryption key protected by
             Windows Credential Manager, as applicable. Secret credential values
             are excluded from JSON exports and work-data backups. Files saved to
             an external backup folder or another location you select remain
@@ -105,9 +106,16 @@
             uses a server-side Admin Function with direct Firestore and Storage
             client access denied; MySQL and custom providers use their HTTPS
             gateway as the authorization boundary. The provider must limit
-            access according to memberships. For team workspaces it also checks
-            each record's read, edit, delete, and access-grant settings for every
-            member before returning or changing that record. These settings
+            access according to memberships. The current reference providers
+            implement team record protocol 2, checking each record's read, edit,
+            delete, and access-grant settings before returning or changing it.
+            These protections require the matching SQL or server kit to be
+            deployed; publishing source or updating the App alone does not
+            update your server. Custom services must implement and verify the
+            same checks. Legacy team snapshots are blocked pending a reviewed
+            migration. Deployment validation remains necessary; see the
+            <a href="https://github.com/NealW1993/lean-six-sigma-legal/blob/main/RELEASE_STATUS.md">release and security status</a>.
+            These settings
             cannot recall copies a member has already viewed, downloaded,
             exported, or backed up. The database owner
             controls the connected database, its geographic location,
@@ -163,7 +171,8 @@
             on the device that made it, under Sync conflicts, until it is
             restored or discarded. Revoking a paired device stops future
             authorized access after verification, but it cannot erase copies,
-            exports, backups, or media already stored on that device.
+            exports, backups, or media already stored on that device. Previously
+            issued signed file URLs can remain usable until their short expiry.
           </p>
           <p>
             Personal-vault membership and team-workspace membership are separate.
@@ -262,8 +271,9 @@
             <li><strong>Files and media:</strong> used for documents, attachments, exports, downloads, and backup locations you select.</li>
           </ul>
           <p>
-            The App does not intentionally record camera or microphone input in
-            the background. Hardware availability and permission controls vary
+            Capture starts only after a user action; the App does not silently
+            start camera or microphone recording. Stop an active recording
+            explicitly when finished. Hardware availability and permission controls vary
             by operating system, and you may change permissions through the
             applicable device settings.
           </p>
@@ -296,9 +306,10 @@
             and protected credentials, and does not clear active Team Workspace
             data. Personal deletions can propagate to connected devices.
             Diagnostics have a separate clear control in Legal &amp; privacy.
-            You can also remove
-            the App to delete app-private local data, subject to operating-system
-            backup behavior. Uninstalling the App does not remove exports,
+            Uninstalling may remove app-private work data, but operating-system
+            backups or platform credential stores can retain information,
+            including Keychain credentials. Uninstalling is not a complete
+            deletion request. It does not remove exports,
             selected backup folders, files downloaded elsewhere, or remote
             database copies.
           </p>
@@ -340,11 +351,16 @@
         <section id="security">
           <h2><span>11</span> Security</h2>
           <p>
-            The App uses platform-protected credential storage, HTTPS,
+            The App uses platform-protected credential storage, HTTPS for its
+            built-in provider endpoints,
             authenticated requests, and provider-side membership checks.
             Supabase connections use RLS; Firebase and gateway connections keep
             administrator credentials server-side and use verified device
-            identities. Pairing and workspace invitations use one-time
+            identities when correctly deployed. Use HTTPS for custom endpoints;
+            do not send sensitive information over an unencrypted connection.
+            Work records and exported backups are not end-to-end encrypted by
+            the App; authorized database administrators and configured services
+            may access the data they handle. Pairing and workspace invitations use one-time
             capabilities, expiration, and passphrase protection where provided.
             No method of storage or transmission is completely secure. You are
             responsible for protecting provider credentials, invitation

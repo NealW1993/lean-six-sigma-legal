@@ -16,13 +16,16 @@ not a second copy of those scripts.
 2. In the app, open **Settings > Personal Connection** for your own connected
    devices, or **Settings > Team Workspaces** for a permission-controlled team.
    Choose Supabase and open that connection's provider setup / SQL + RLS action.
-3. Copy the **complete initial SQL + RLS** script for that scope. In Supabase
-   SQL Editor, check the Database dropdown and choose **Row limit > No limit**
-   if displayed results are currently limited. That setting controls displayed
-   query results, not RLS or app access permissions.
+3. Copy the **complete initial SQL + RLS** script for that scope. Open SQL
+   Editor in the work-data project, not the publisher entitlement project.
+   Do not run `provider_servers/mysql/schema.sql` in Supabase; it is MySQL SQL.
 4. Check that you are in the intended project, then run the entire script.
    Resolve any SQL errors before continuing. Do not run only the table-creation
    part or disable RLS to bypass a setup error.
+   In Storage > Files > Buckets, use the bucket name specified by that script
+   and keep **Public bucket off**. A name such as "Private Bucket" is only a
+   name, not an access setting. Keep the script's restricted policies rather
+   than adding an allow-everyone rule.
 5. Enter the Project URL / table endpoint shown by the app and a publishable
    (`sb_publishable_...`) or legacy anon key. Never enter a `service_role` key,
    `sb_secret_...` key, or database password as the app's client key.

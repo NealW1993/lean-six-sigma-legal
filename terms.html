@@ -27,7 +27,7 @@
       <aside class="legal-summary" aria-label="Document summary">
         <p class="eyebrow">LEGAL DOCUMENT</p>
         <h1>Terms of Use</h1>
-        <p class="effective">Effective October 6, 2026</p>
+        <p class="effective">Effective October 21, 2026</p>
         <p>
           These terms govern your use of the Lean Six Sigma Toolbox mobile and Windows apps
           and their Free, Pro, team-workspace, and paired-device features.
@@ -113,8 +113,11 @@
             You retain responsibility for content you create or import. You
             represent that you have the rights and permissions necessary to use
             that content. The App applies workspace and item permissions in its
-            interface, and the team database also checks each record's read,
-            edit, delete, and access-grant permissions on the server. Owners and
+            interface. The current reference providers implement server-side
+            read, edit, delete, and access-grant checks through team record
+            protocol 2. These checks require the matching server version to be
+            deployed and validated; App updates do not deploy server changes.
+            Custom providers are the operator's responsibility. Owners and
             authorized inviters are
             responsible for whom they admit. Removing a member or changing a
             permission cannot retrieve copies that a member previously viewed,
@@ -163,7 +166,9 @@
           <p>
             The first authorized sync may combine records previously created on
             mobile and Windows. When the same record was changed in more than one
-            place, the App generally keeps the newest recognized edit. Deletions
+            place in Personal Connection, the App generally keeps the newest
+            recognized edit. Team records instead use server revision checks
+            and retain competing edits under Sync conflicts. Deletions
             may synchronize later through deletion markers. Clock differences,
             delayed connections, interrupted transfers, database changes, or
             incompatible versions can delay synchronization or produce
@@ -176,6 +181,7 @@
             download through the configured storage service. Revoking a device
             stops future authorized access after verification but does not erase
             local files, exports, backups, or other copies already obtained.
+            A previously issued signed file URL can remain usable until expiry.
           </p>
         </section>
 

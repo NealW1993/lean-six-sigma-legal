@@ -10,10 +10,15 @@ checks every team item's permissions on the server with the module in
 
 1. Create/select a Firebase project and enable **Authentication > Sign-in
    method > Anonymous**.
+   Deploying Cloud Functions and using Cloud Storage requires the Blaze
+   pay-as-you-go plan and a linked billing account. Review quotas and set
+   billing alerts; alerts are not a spending cap. See the official
+   [Functions setup](https://firebase.google.com/docs/functions/get-started)
+   and [Storage billing requirements](https://firebase.google.com/docs/storage/faqs-storage-changes-announced-sept-2024).
 2. Create Firestore and Cloud Storage in the Firebase console.
 3. Install Node.js 22 and Firebase CLI, then run `firebase login`.
 4. Copy `.firebaserc.example` to `.firebaserc` and replace the project id.
-5. From `functions`, run `npm install` and `npm run check`. Deploying builds
+5. From `functions`, run `npm ci` and `npm run check`. Deploying builds
    the function first.
 6. Use the Firebase **Web API key** from Project settings > General for
    `SIX_SIGMA_CLIENT_KEY`. Generate a separate random value of at least 32 bytes

@@ -5,10 +5,11 @@ apps. You do not need collaborator access to read or download this repository.
 Visitors cannot push changes to it; a fork or pull request is a separate copy
 or proposed change, not permission to publish here.
 
-**Release candidate status:** team workspaces check every item's permissions on
-the server. Workspaces holding team data from earlier snapshot-based versions
-wait for a reviewed migration. See [release status](RELEASE_STATUS.md) and
-[September 23 UI previews](release-preview/2026-09-23/README.md).
+**Release candidate status:** current reference providers check team item
+permissions when the matching server is deployed. Workspaces holding team data
+from earlier snapshot-based versions wait for a reviewed migration. Release
+validation is not complete. See [release status](RELEASE_STATUS.md) and
+[October 21 UI previews](release-preview/2026-10-21/index.html).
 
 ## Provider setup
 

@@ -8,18 +8,18 @@
     <meta name="theme-color" content="#121619" media="(prefers-color-scheme: dark)">
     <title>Database Provider Setup | Lean Six Sigma Toolbox</title>
     <link rel="icon" href="assets/six-sigma-icon.png?v=20260922">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=20261020">
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="index.html" aria-label="Lean Six Sigma Toolbox legal home">
+      <a class="brand" href="index.html" target="_blank" rel="noopener noreferrer" aria-label="Lean Six Sigma Toolbox legal home">
         <img src="assets/six-sigma-icon.png?v=20260922" alt="" width="44" height="44">
         <span><strong>Lean Six Sigma Toolbox</strong><small>Provider setup</small></span>
       </a>
       <nav aria-label="Legal and setup documents">
-        <a href="privacy.html">Privacy</a>
-        <a href="terms.html">Terms</a>
-        <a aria-current="page" href="provider-setup.html">Provider setup</a>
+        <a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a>
+        <a href="terms.html" target="_blank" rel="noopener noreferrer">Terms</a>
+        <a aria-current="page" href="provider-setup.html" target="_blank" rel="noopener noreferrer">Provider setup</a>
       </nav>
     </header>
 
@@ -27,12 +27,12 @@
       <aside class="legal-summary" aria-label="Page summary">
         <p class="eyebrow">DATABASE SETUP</p>
         <h1>Choose your sync provider</h1>
-        <p class="effective">Updated September 23, 2026</p>
+        <p class="effective">Updated October 21, 2026</p>
         <p>
           Personal and Team Workspaces can use Supabase, Firebase, the
           bundled MySQL gateway, or another compatible HTTPS service.
         </p>
-        <a class="button" href="https://github.com/NealW1993/lean-six-sigma-legal/tree/main/provider_servers">Open server kits</a>
+        <a class="button" href="https://github.com/NealW1993/lean-six-sigma-legal/tree/main/provider_servers" target="_blank" rel="noopener noreferrer">Open server kits</a>
         <nav class="section-nav" aria-label="Choose a provider">
           <a href="#supabase">Supabase</a>
           <a href="#firebase">Firebase</a>
@@ -44,14 +44,22 @@
 
       <article class="legal-document">
         <section id="security-status">
-          <h2>Team permissions are checked on the server</h2>
+          <h2>Server permissions require a current deployment</h2>
           <p>
-            Team workspaces store each item on its own. The provider checks every
+            The current reference kits store each team item on its own and check every
             item's read, edit, delete, and access-grant permissions for each member
             before returning or changing it: Supabase in database functions behind
             row-level security, Firebase in its Admin Function, and MySQL in its
             gateway. An App version that still sends whole-workspace snapshots is
             refused until it is updated.
+          </p>
+          <p>
+            These are source-level protections, not confirmation that your
+            hosted server has been updated or independently security-audited.
+            Deploy the matching script or kit and test it before use. Custom
+            providers must implement the same checks. See the
+            <a href="https://github.com/NealW1993/lean-six-sigma-legal/blob/main/RELEASE_STATUS.md" target="_blank" rel="noopener noreferrer">release and security status</a>
+            for remaining validation and migration work.
           </p>
           <p>
             A workspace that already holds team snapshots from an earlier version
@@ -88,9 +96,10 @@
         <section id="supabase">
           <h2><span>02</span> Supabase</h2>
           <ol>
-            <li>Create a project and enable Authentication &gt; Sign-in Providers &gt; Anonymous.</li>
+            <li>In a project for your work data, open Authentication &gt; Sign In / Providers and enable Allow anonymous sign-ins. Anonymous users still have authenticated identities; this does not make your database public.</li>
             <li>In Settings, open Personal Connection or Team Workspaces, expand provider setup, and copy the complete initial SQL + RLS script.</li>
-            <li>In Supabase SQL Editor, check the Database dropdown and choose no row limit if the editor currently limits results. This affects displayed results, not the app's access permissions. Paste and run the complete script; confirm there are no SQL errors. It creates tables, membership, one-time invites, RLS policies, RPCs, and private Storage policies.</li>
+            <li>Open SQL Editor in that same work-data project, paste the complete app-supplied Supabase SQL + RLS script, and run it. Confirm there are no SQL errors. Do not run <code>provider_servers/mysql/schema.sql</code> here: that file is only for MySQL. The publisher entitlement project is a separate service, not the destination for your work data.</li>
+            <li>Open Storage &gt; Files &gt; Buckets. Use the exact bucket name specified by the app's script. In the bucket's settings, keep <strong>Public bucket off</strong>. The name "Private Bucket" alone does not make a bucket private. The script supplies access policies; do not replace them with an allow-everyone policy or create a second bucket with an arbitrary name.</li>
             <li>Copy the Project URL and append the table path shown in the app.</li>
             <li>Copy an <code>sb_publishable_</code> key or legacy anon key. Never use <code>sb_secret_</code> or <code>service_role</code>.</li>
             <li>Save and run Test connection before turning on synchronization or creating an encrypted pairing key.</li>
@@ -106,15 +115,15 @@
             replaces functions and policies in place and keeps existing records.
             Back up the project first and try the script on a staging project.
           </p>
-          <p><a href="https://supabase.com/dashboard/projects">Open Supabase projects</a> &middot; <a href="https://supabase.com/docs/guides/database/postgres/row-level-security">RLS documentation</a></p>
+          <p><a href="https://supabase.com/dashboard/projects" target="_blank" rel="noopener noreferrer">Open Supabase projects</a> &middot; <a href="https://supabase.com/docs/guides/database/postgres/row-level-security" target="_blank" rel="noopener noreferrer">RLS documentation</a> &middot; <a href="https://supabase.com/docs/guides/storage/buckets/fundamentals" target="_blank" rel="noopener noreferrer">Private buckets</a></p>
         </section>
 
         <section id="firebase">
           <h2><span>03</span> Firebase</h2>
           <ol>
-            <li>Create a Firebase project and enable Anonymous Authentication.</li>
+            <li>Create a Firebase project and enable Anonymous Authentication. Deployment of this kit's Cloud Function and use of Cloud Storage require the Blaze pay-as-you-go plan with billing linked. Review costs and configure billing alerts; this is not an unlimited free hosted service.</li>
             <li>Create Firestore and Cloud Storage in the same project.</li>
-            <li>Download the <a href="https://github.com/NealW1993/lean-six-sigma-legal/tree/main/provider_servers/firebase">Firebase server kit</a>.</li>
+            <li>Download the <a href="https://github.com/NealW1993/lean-six-sigma-legal/tree/main/provider_servers/firebase" target="_blank" rel="noopener noreferrer">Firebase server kit</a>.</li>
             <li>Use Node.js 22 and Firebase CLI. Set <code>SIX_SIGMA_CLIENT_KEY</code> to this project's Firebase Web API key. Generate a separate cryptographically random <code>SIX_SIGMA_SETUP_TOKEN</code> of at least 32 bytes for owner setup. Do not reuse either value as the other.</li>
             <li>From the kit root, deploy the Function, Firestore rules, and Storage rules. Direct client access is denied; only the Admin Function handles data.</li>
             <li>In the app choose Firebase, paste the deployed <code>sixSigmaApi</code> URL and the Web API key from Project settings &gt; General.</li>
@@ -134,14 +143,14 @@
             minutes. An already issued URL remains usable until it expires,
             even if the device is revoked during that interval.
           </p>
-          <p><a href="https://console.firebase.google.com/">Open Firebase Console</a> &middot; <a href="https://firebase.google.com/docs/auth/web/anonymous-auth">Anonymous Auth guide</a> &middot; <a href="https://firebase.google.com/docs/functions/get-started">Functions guide</a></p>
+          <p><a href="https://console.firebase.google.com/" target="_blank" rel="noopener noreferrer">Open Firebase Console</a> &middot; <a href="https://firebase.google.com/docs/auth/web/anonymous-auth" target="_blank" rel="noopener noreferrer">Anonymous Auth guide</a> &middot; <a href="https://firebase.google.com/docs/functions/get-started" target="_blank" rel="noopener noreferrer">Functions guide</a> &middot; <a href="https://firebase.google.com/docs/storage/faqs-storage-changes-announced-sept-2024" target="_blank" rel="noopener noreferrer">Storage billing requirements</a></p>
         </section>
 
         <section id="mysql">
           <h2><span>04</span> MySQL</h2>
           <p>
             The mobile or Windows app never connects to port 3306. Deploy the
-            <a href="https://github.com/NealW1993/lean-six-sigma-legal/tree/main/provider_servers/mysql">Deno/MySQL server kit</a>
+            <a href="https://github.com/NealW1993/lean-six-sigma-legal/tree/main/provider_servers/mysql" target="_blank" rel="noopener noreferrer">Deno/MySQL server kit</a>
             and put its port 8080 behind an HTTPS reverse proxy.
           </p>
           <ol>
@@ -167,14 +176,14 @@
             from the September 16, 2026 kit also needs the kit's
             <code>upgrade.sql</code> once; its README gives the command.
           </p>
-          <p><a href="https://docs.docker.com/get-started/get-docker/">Install Docker</a> &middot; <a href="https://dev.mysql.com/doc/refman/8.4/en/security.html">MySQL security guidance</a></p>
+          <p><a href="https://docs.docker.com/get-started/get-docker/" target="_blank" rel="noopener noreferrer">Install Docker</a> &middot; <a href="https://dev.mysql.com/doc/refman/8.4/en/security.html" target="_blank" rel="noopener noreferrer">MySQL security guidance</a></p>
         </section>
 
         <section id="custom">
           <h2><span>05</span> Custom HTTPS provider</h2>
           <p>
             Implement the
-            <a href="https://github.com/NealW1993/lean-six-sigma-legal/tree/main/provider_protocol">Sync Protocol v1 OpenAPI contract</a>.
+            <a href="https://github.com/NealW1993/lean-six-sigma-legal/tree/main/provider_protocol" target="_blank" rel="noopener noreferrer">Sync Protocol v1 OpenAPI contract</a>.
             The provider may use PostgreSQL, SQL Server, MongoDB, DynamoDB,
             Firebase, MySQL, or another durable store, but it must preserve the
             protocol's authorization behavior.
@@ -202,7 +211,7 @@
             <li>Use separate Personal and Team Workspace scopes and test with two unrelated device identities.</li>
             <li>Complete setup and Test connection before generating an invite. Pair a second device, make one edit, sync, and confirm it arrives on the first.</li>
             <li>Revoke that test device and confirm new authorized requests fail. Already downloaded files and unexpired signed URLs are not erased by revocation.</li>
-            <li>Confirm a non-member receives HTTP 403 for every vault/workspace operation.</li>
+            <li>Confirm a non-member cannot read or change vault/workspace data. A gateway normally returns HTTP 403; Supabase RLS can return no rows, while an RPC may return a permission error. Verify that no restricted content is returned, not only the status code.</li>
             <li>As a member, confirm you cannot open, change, or delete a team item you were not granted, and that removing a member stops their next sync.</li>
             <li>Confirm copied public keys cannot read data without a valid identity.</li>
             <li>Confirm consumed invitations and rotated refresh tokens cannot be reused.</li>
@@ -215,7 +224,7 @@
 
     <footer>
       <p>&copy; 2026 Lean Six Sigma Toolbox. All rights reserved.</p>
-      <p><a href="privacy.html">Privacy Policy</a> &middot; <a href="terms.html">Terms of Use</a></p>
+      <p><a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a> &middot; <a href="terms.html" target="_blank" rel="noopener noreferrer">Terms of Use</a></p>
     </footer>
   </body>
 </html>

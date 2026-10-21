@@ -11,5 +11,5 @@
     "target": "es2022"
   },
   "compileOnSave": false,
-  "include": ["src", "../../shared"]
+  "include": ["src", "../../shared/item_authorization.ts"]
 }

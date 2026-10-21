@@ -1,5 +1,12 @@
 import { jwtVerify, SignJWT } from "jose";
-import {type Actor, type TeamRecord, AuthorizationError, applyChanges, projectRecords, authorizeFile} from "../shared/item_authorization.ts";
+import {
+  type Actor,
+  applyChanges,
+  AuthorizationError,
+  authorizeFile,
+  projectRecords,
+  type TeamRecord,
+} from "../shared/item_authorization.ts";
 import {
   createPool,
   type PoolConnection,
@@ -277,29 +284,84 @@ async function workspaceMember(
   return row;
 }
 
-async function teamRecords(userId: string, workspaceId: string, changes?: unknown,
-  path?: string, action: "read" | "write" | "delete" = "read"): Promise<unknown> {
-  return await transaction(async db => {
-    const workspace = await one(db, "SELECT * FROM workspaces WHERE id = ? FOR UPDATE", [workspaceId]);
-    await one(db, "SELECT user_id FROM workspace_members WHERE workspace_id = ? AND user_id = ? FOR SHARE", [workspaceId, userId]);
+async function teamRecords(
+  userId: string,
+  workspaceId: string,
+  changes?: unknown,
+  path?: string,
+  action: "read" | "write" | "delete" = "read",
+): Promise<unknown> {
+  return await transaction(async (db) => {
+    const workspace = await one(
+      db,
+      "SELECT * FROM workspaces WHERE id = ? FOR UPDATE",
+      [workspaceId],
+    );
+    await one(
+      db,
+      "SELECT user_id FROM workspace_members WHERE workspace_id = ? AND user_id = ? FOR SHARE",
+      [workspaceId, userId],
+    );
     const member = await workspaceMember(db, userId, workspaceId);
-    if (!workspace) throw new ApiError(403, "not_a_workspace_member", "Workspace membership required.");
-    if (Number(workspace.record_protocol) !== 2 && await one(db,
-      "SELECT user_id FROM shared_snapshots WHERE workspace_id = ? LIMIT 1", [workspaceId])) {
-      throw new ApiError(409, "migration_required", "Administrator review of legacy team data is required.");
+    if (!workspace) {
+      throw new ApiError(
+        403,
+        "not_a_workspace_member",
+        "Workspace membership required.",
+      );
     }
-    const actor: Actor = {uid: userId, principal: String(member.principal_id || userId),
-      owner: member.role === "owner", canEdit: bool(member.can_edit),
-      canDelete: bool(member.can_delete), name: String(member.display_name)};
-    const stored = await rows(db, "SELECT id, record_json FROM team_records WHERE workspace_id = ?", [workspaceId]);
-    const records = new Map(stored.map(row => [String(row.id), parsedPayload(row.record_json) as unknown as TeamRecord]));
+    if (
+      Number(workspace.record_protocol) !== 2 &&
+      await one(
+        db,
+        "SELECT user_id FROM shared_snapshots WHERE workspace_id = ? LIMIT 1",
+        [workspaceId],
+      )
+    ) {
+      throw new ApiError(
+        409,
+        "migration_required",
+        "Administrator review of legacy team data is required.",
+      );
+    }
+    const actor: Actor = {
+      uid: userId,
+      principal: String(member.principal_id || userId),
+      owner: member.role === "owner",
+      canEdit: bool(member.can_edit),
+      canDelete: bool(member.can_delete),
+      name: String(member.display_name),
+    };
+    const stored = await rows(
+      db,
+      "SELECT id, record_json FROM team_records WHERE workspace_id = ?",
+      [workspaceId],
+    );
+    const records = new Map(
+      stored.map(
+        (row) => [
+          String(row.id),
+          parsedPayload(row.record_json) as unknown as TeamRecord,
+        ],
+      ),
+    );
     if (path) return authorizeFile(records, actor, path, action);
-    const updated = changes === undefined ? records : applyChanges(records, changes, actor, workspaceId,
-      String(workspace.name), new Date().toISOString());
+    const updated = changes === undefined ? records : applyChanges(
+      records,
+      changes,
+      actor,
+      workspaceId,
+      String(workspace.name),
+      new Date().toISOString(),
+    );
     if (changes !== undefined) {
-      for (const [id, record] of updated) if (record !== records.get(id)) {
-        await db.execute("INSERT INTO team_records(workspace_id,id,record_json) VALUES(?,?,CAST(? AS JSON)) ON DUPLICATE KEY UPDATE record_json=VALUES(record_json)",
-          [workspaceId, id, JSON.stringify(record)]);
+      for (const [id, record] of updated) {
+        if (record !== records.get(id)) {
+          await db.execute(
+            "INSERT INTO team_records(workspace_id,id,record_json) VALUES(?,?,CAST(? AS JSON)) ON DUPLICATE KEY UPDATE record_json=VALUES(record_json)",
+            [workspaceId, id, JSON.stringify(record)],
+          );
+        }
       }
     }
     return projectRecords(updated, actor, workspaceId, String(workspace.name));
@@ -795,7 +857,13 @@ async function execute(
       }
       await pool.execute(
         "INSERT INTO workspace_invites (invite_hash, workspace_id, created_by, expires_at, delegated_principal) VALUES (?, ?, ?, ?, ?)",
-        [hash, workspaceId, userId, new Date(value(data, "expires_at", 80)), data.share_identity === true ? (member.principal_id || userId) : null],
+        [
+          hash,
+          workspaceId,
+          userId,
+          new Date(value(data, "expires_at", 80)),
+          data.share_identity === true ? (member.principal_id || userId) : null,
+        ],
       );
       return { created: true };
     }
@@ -924,22 +992,41 @@ async function execute(
       return { removed: true };
     }
     case "push_shared_snapshot": {
-      throw new ApiError(426, "upgrade_required", "Upgrade the app to item authorization protocol 2.");
+      throw new ApiError(
+        426,
+        "upgrade_required",
+        "Upgrade the app to item authorization protocol 2.",
+      );
     }
     case "pull_shared_snapshots": {
-      throw new ApiError(426, "upgrade_required", "Upgrade the app to item authorization protocol 2.");
+      throw new ApiError(
+        426,
+        "upgrade_required",
+        "Upgrade the app to item authorization protocol 2.",
+      );
     }
     case "push_shared_records":
-      if (new TextEncoder().encode(JSON.stringify(data.changes)).length > maxSnapshotBytes) {
+      if (
+        new TextEncoder().encode(JSON.stringify(data.changes)).length >
+          maxSnapshotBytes
+      ) {
         throw new ApiError(413, "payload_too_large", "Changes are too large.");
       }
-      return await teamRecords(userId, value(data, "workspace_id", 100), data.changes ?? null);
+      return await teamRecords(
+        userId,
+        value(data, "workspace_id", 100),
+        data.changes ?? null,
+      );
     case "pull_shared_records":
       return await teamRecords(userId, value(data, "workspace_id", 100));
     case "attachment_upload_url":
     case "attachment_download_url": {
       const method = operation === "attachment_upload_url" ? "PUT" : "GET";
-      const claims = await attachmentClaims(data, userId, method === "PUT" ? "write" : "read");
+      const claims = await attachmentClaims(
+        data,
+        userId,
+        method === "PUT" ? "write" : "read",
+      );
       const token = await new SignJWT({ ...claims, kind: "file", method })
         .setProtectedHeader({ alg: "HS256" }).setSubject(userId).setIssuer(
           protocol,
@@ -970,7 +1057,11 @@ async function execute(
   }
 }
 
-async function attachmentClaims(data: Json, userId: string, action: "read" | "write" | "delete"): Promise<Json> {
+async function attachmentClaims(
+  data: Json,
+  userId: string,
+  action: "read" | "write" | "delete",
+): Promise<Json> {
   const scope = value(data, "scope", 20);
   const scopeId = value(data, "scope_id", 100);
   const id = value(data, "id", 100);
@@ -982,9 +1073,23 @@ async function attachmentClaims(data: Json, userId: string, action: "read" | "wr
   ) throw new ApiError(400, "invalid_path", "The attachment path is invalid.");
   if (scope === "personal") await personalMember(pool, userId, scopeId);
   else {
-    const record = await teamRecords(userId, scopeId, undefined, storagePath, action) as TeamRecord;
-    if (record.body.sha256 !== data.sha256 || record.body.sizeBytes !== data.size_bytes || record.body.mimeType !== data.mime_type) {
-      throw new ApiError(400, "manifest_mismatch", "Use the saved attachment manifest.");
+    const record = await teamRecords(
+      userId,
+      scopeId,
+      undefined,
+      storagePath,
+      action,
+    ) as TeamRecord;
+    if (
+      record.body.sha256 !== data.sha256 ||
+      record.body.sizeBytes !== data.size_bytes ||
+      record.body.mimeType !== data.mime_type
+    ) {
+      throw new ApiError(
+        400,
+        "manifest_mismatch",
+        "Use the saved attachment manifest.",
+      );
     }
   }
   const size = Number(data.size_bytes);
@@ -1042,8 +1147,13 @@ async function fileRequest(request: Request, url: URL): Promise<Response> {
     const scopeId = String(claims.scope_id);
     if (scope === "personal") {
       await personalMember(pool, verified.payload.sub, scopeId);
-    } else await teamRecords(verified.payload.sub, scopeId, undefined,
-      String(claims.storage_path), request.method === "PUT" ? "write" : "read");
+    } else {await teamRecords(
+        verified.payload.sub,
+        scopeId,
+        undefined,
+        String(claims.storage_path),
+        request.method === "PUT" ? "write" : "read",
+      );}
     const path = localFile(String(claims.storage_path));
     if (request.method === "PUT") {
       const bytes = new Uint8Array(await request.arrayBuffer());
@@ -1159,11 +1269,14 @@ Deno.serve({ port }, async (request) => {
     const result = await execute(operation, object(body.data), userId);
     return jsonResponse(200, { ok: true, data: result });
   } catch (error) {
-    const known = error instanceof ApiError || error instanceof AuthorizationError ? error : new ApiError(
-      500,
-      "server_error",
-      "The provider could not complete the request.",
-    );
+    const known =
+      error instanceof ApiError || error instanceof AuthorizationError
+        ? error
+        : new ApiError(
+          500,
+          "server_error",
+          "The provider could not complete the request.",
+        );
     console.error(
       JSON.stringify({
         event: "sync_request_failed",
