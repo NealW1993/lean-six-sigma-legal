@@ -63,9 +63,13 @@
           </p>
           <p>
             A workspace that already holds team snapshots from an earlier version
-            stops syncing until an administrator reviews that data. A reviewed
-            migration procedure is not published yet; do not mark a workspace
-            migrated by hand or delete its snapshots to bypass the check. Test with
+            stops syncing until an administrator reviews that data. Supabase
+            administrators can follow the
+            <a href="https://github.com/NealW1993/lean-six-sigma-legal/blob/main/provider_servers/supabase/TEAM_UPGRADE.md" target="_blank" rel="noopener noreferrer">reviewed team database upgrade</a>
+            using the latest App's full SQL + RLS script. Firebase and MySQL legacy
+            snapshot recovery still require a separately reviewed procedure.
+            Do not mark a workspace migrated by hand or delete its snapshots to
+            bypass the check. Test with
             two unrelated member identities before trusting a deployment with
             restricted records.
           </p>

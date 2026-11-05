@@ -44,8 +44,9 @@ Run the latest script again after each app update, so the team database gets
 server-side fixes. It replaces functions and policies in place and keeps
 existing records. A workspace that still holds team snapshots from an earlier
 version stops syncing with `TEAM_MIGRATION_REQUIRED` until an administrator
-reviews that data. A reviewed migration procedure is not published yet; do not
-mark the migration complete by hand or delete the snapshots.
+reviews that data. Follow [Team database upgrade](TEAM_UPGRADE.md). The full
+script includes an administrator-only reviewed import; it does not run it
+automatically. Do not mark the migration complete by hand or delete snapshots.
 
 ## Different from the publisher backend
 

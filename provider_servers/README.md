@@ -5,7 +5,7 @@ sync for the app. They are not a managed service or a guarantee of production
 security. Keep a tested backup and validate authorization on a staging instance
 before storing real work.
 
-## Team permissions (October 6, 2026)
+## Team permissions (updated November 5, 2026)
 
 Team workspaces use team record protocol 2: each team item is stored on its
 own, and the server checks its read, edit, delete and access-grant permissions
@@ -16,8 +16,10 @@ App versions that still send whole-workspace snapshots are refused with
 "upgrade required" until they are updated.
 
 A workspace that already holds team snapshots from an earlier version stops
-syncing ("migration required") until an administrator reviews that data. A
-reviewed migration procedure is not published yet: do not mark a workspace
+syncing ("migration required") until an administrator reviews that data.
+Supabase administrators can follow [Team database upgrade](supabase/TEAM_UPGRADE.md)
+using the latest app's full SQL + RLS script. Firebase and MySQL legacy snapshot
+recovery still require a separately reviewed procedure. Do not mark a workspace
 migrated by hand or delete its snapshots to get past the check.
 
 Test with two unrelated member identities before trusting a deployment with

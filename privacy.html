@@ -27,16 +27,18 @@
       <aside class="legal-summary" aria-label="Document summary">
         <p class="eyebrow">LEGAL DOCUMENT</p>
         <h1>Privacy Policy</h1>
-        <p class="effective">Effective October 21, 2026</p>
+        <p class="effective">Updated November 5, 2026</p>
         <p>
           This policy explains how the Lean Six Sigma Toolbox mobile and Windows apps store,
           transmit, share, protect, and delete information.
         </p>
         <a class="button" href="mailto:nealwiechman@gmail.com?subject=Six%20Sigma%20Privacy%20Request">Privacy request</a>
         <nav class="section-nav" aria-label="Privacy sections">
+          <a href="#account-work-data">Pro accounts and work data</a>
           <a href="#cloud">Cloud and devices</a>
           <a href="#ai">AI and recordings</a>
           <a href="#retention">Delete or export data</a>
+          <a href="#account-deletion">Delete your account</a>
           <a href="#security">Security</a>
         </nav>
       </aside>
@@ -53,8 +55,10 @@
           </p>
           <p>
             Lean Six Sigma Toolbox is primarily an offline productivity and analysis tool.
-            It does not require a publisher-hosted username and password
-            account. The App may create pseudonymous authentication identities
+            Local free use does not require a publisher account. Account-enabled
+            releases offer email/password and email-code sign-in to recover and share your Pro
+            purchases; independent Windows purchases require that account.
+            The App may create pseudonymous authentication identities
             to secure optional database connections, verify Pro Unlock, and link
             authorized devices. Optional cloud, AI, team-workspace,
             cross-device, and purchase features transmit information as
@@ -85,6 +89,18 @@
 
         <section id="cloud">
           <h2><span>03</span> Optional cloud and team-workspace connections</h2>
+          <p id="account-work-data">
+            <strong>Pro sign-in is not work-data synchronization.</strong>
+            Signing into the same Pro account on Windows and mobile does not
+            upload, download, merge, or transfer your projects, notes, meetings,
+            charts, calculations, data sets, files, or workspace credentials.
+            Work-data transfer requires a separately authorized Personal
+            Connection, Connect device pairing, Team Workspace connection, or
+            an import/export you initiate. Existing authorized connections may
+            continue syncing according to their settings, independently of Pro
+            account sign-in or sign-out. The publisher receives account and
+            licensing information described below, not your work records.
+          </p>
           <p>
             When you configure a Personal or Team Workspace, the App sends
             selected work data to the Supabase project, Firebase project,
@@ -183,14 +199,27 @@
           </p>
           <p>
             The publisher-operated entitlement service stores only the
-            pseudonymous information needed to verify and link Pro access. This
+            information needed to verify and link Pro access. This
             may include a random authentication identifier used as a RevenueCat
             App User ID, entitlement and product status, store and environment,
             verification times, linked owner and device identifiers, a device
             label and platform, link or revocation times, and one-time invitation
             hashes and expirations. Hosting providers may also process IP
             addresses and request logs as part of operating and securing the
-            service. Windows periodically contacts this service to verify Pro
+            service. If you create a Pro account, Supabase Auth and the configured
+            email delivery provider also process your email address and sign-in
+            requests. The publisher associates your devices with that account,
+            without changing work-database or team permissions. Microsoft purchase
+            verification uses Store product and transaction identifiers and a
+            protected Store collections credential held on the server.
+            Account passwords are sent to Supabase Auth over HTTPS, not saved by
+            the App. Optional mobile biometric account sign-in retains only an
+            account refresh credential in separate, device-bound protected
+            storage. The App does not receive fingerprint or face templates.
+            Disabling biometric sign-in or deleting the account removes that
+            saved credential on the device. This is not an app-wide lock; the
+            anonymous device session remains separate for licensing and sync.
+            Devices periodically contact this service to verify Pro
             access and may temporarily use a recent cached verification while
             offline.
           </p>
@@ -256,9 +285,11 @@
             and diagnostic information under their own policies.
           </p>
           <p>
-            Windows does not process the mobile store purchase. An authorized
-            Windows installation checks the publisher entitlement service to
-            confirm that it remains linked to an active mobile Pro entitlement.
+            In Windows builds with Store purchasing enabled, Microsoft processes
+            Pro payments. The publisher verifies ownership with Microsoft and
+            can share Pro across devices belonging to the same recovery account.
+            The original store retains the transaction and handles billing and
+            refund eligibility. The App does not receive full payment-card details.
           </p>
         </section>
 
@@ -284,7 +315,8 @@
           <p>The App shares or transmits information only as needed for:</p>
           <ul>
             <li>Services that you configure, including your selected database and AI provider.</li>
-            <li>Google Play, Apple's App Store, RevenueCat, and the publisher entitlement service for purchase and paired-device entitlement management.</li>
+            <li>Google Play, Apple's App Store, Microsoft Store where enabled, RevenueCat, and the publisher entitlement service for purchase and device entitlement management.</li>
+            <li>Supabase Auth and the configured email delivery provider for optional Pro account sign-in, verification, recovery, and deletion requests.</li>
             <li>Workspace members with whom you intentionally share content.</li>
             <li>Paired devices that you authorize to access a Personal Connection or private file transfer.</li>
             <li>Exports, email drafts, print jobs, or operating-system share actions that you initiate.</li>
@@ -334,6 +366,29 @@
             entitlement-link data by contacting the email above, subject to
             records the publisher must retain. Such a request does not delete
             work data held in a database controlled by you or your organization.
+          </p>
+          <p id="account-deletion">
+            <strong>Delete your Lean Six Sigma Toolbox Pro account.</strong>
+            Account-enabled builds offer Delete account in Settings &gt; Pro
+            Unlock, with fresh email-code verification. This removes the email
+            recovery account and shared account access, not original store
+            transactions, local work, or independently hosted database records.
+            Minimal pseudonymous ownership bindings and deletion records remain
+            to prevent duplicate claims or unauthorized transfers. Previously
+            issued signed offline access can remain valid until expiry.
+          </p>
+          <p>
+            You can also request deletion without reinstalling the App: email
+            <a href="mailto:nealwiechman@gmail.com?subject=Lean%20Six%20Sigma%20Toolbox%20account%20deletion">nealwiechman@gmail.com</a>
+            with the subject <strong>Lean Six Sigma Toolbox account deletion</strong>.
+            Send the request from the email address associated with your Pro
+            account, and state whether you are requesting account deletion or
+            deletion of other publisher-held records. Ownership verification
+            may be required before deletion. Do not send your password, email
+            verification codes, database keys, or private work files. You will
+            be informed of completion or any records that must be retained for
+            the purposes described above. For independently hosted work data,
+            contact that database's administrator separately.
           </p>
         </section>
 

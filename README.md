@@ -6,8 +6,9 @@ Visitors cannot push changes to it; a fork or pull request is a separate copy
 or proposed change, not permission to publish here.
 
 **Release candidate status:** current reference providers check team item
-permissions when the matching server is deployed. Workspaces holding team data
-from earlier snapshot-based versions wait for a reviewed migration. Release
+permissions when the matching server is deployed. Supabase legacy workspaces
+have an [administrator-reviewed upgrade](provider_servers/supabase/TEAM_UPGRADE.md);
+Firebase/MySQL legacy recovery still needs a reviewed procedure. Release
 validation is not complete. See [release status](RELEASE_STATUS.md) and
 [October 21 UI previews](release-preview/2026-10-21/index.html).
 
@@ -34,6 +35,14 @@ Expected public URLs:
 - `https://nealw1993.github.io/lean-six-sigma-legal/`
 - `https://nealw1993.github.io/lean-six-sigma-legal/privacy.html`
 - `https://nealw1993.github.io/lean-six-sigma-legal/terms.html`
+- `https://nealw1993.github.io/lean-six-sigma-legal/privacy.html#account-deletion`
+
+Pro account sign-in does not sync work records. Work-data connections and
+permissions remain separate. Account-enabled feature disclosures are conditional
+on the installed build and publisher configuration; see the release status.
+Use the account-deletion URL for the external Play Console deletion resource.
+The published email request route is handled by the publisher, not an automatic
+web deletion service.
 
 Use the Privacy Policy URL in Google Play Console. Supply both document URLs
 to Flutter release builds:
