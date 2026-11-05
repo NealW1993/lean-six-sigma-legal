@@ -104,6 +104,13 @@ real purchase/refund/recovery, biometric hardware, signed-package upgrades and
 native iOS validation still need verification. There is no claim of zero
 vulnerabilities or unconditional store readiness.
 
+The November 5 local Flutter run passed **3,240 tests**, with **39 skipped**
+under their existing opt-in conditions, and analysis reported no issues.
+Publisher function tests passed **52 cases**; a separate disposable PostgreSQL
+run passed **19 steps across two tests** for account and purchase ownership.
+The published legal pages passed **64 browser checks** across widths, themes
+and text scaling. This evidence does not replace the production checks above.
+
 Public provider source is a reference kit, not a hosted production deployment.
 Publishing documentation or preview images does not deploy a database migration,
 update installed apps, upload a store binary, or alter an existing store listing.
